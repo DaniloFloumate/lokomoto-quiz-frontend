@@ -944,6 +944,9 @@ const Quiz = (function() {
         showEduBlock(slideIndex + 1);
       }
     });
+
+    // Aktiviraj swipe gestures za mobilne uređaje
+    attachEduSwipeListeners(slideIndex);
   }
 
 
@@ -1000,9 +1003,61 @@ const Quiz = (function() {
       // Fade-in novog sadržaja
       contentEl.style.opacity = '1';
       contentEl.style.transform = 'translateY(0)';
+
+      // Re-attach swipe listenere za nov slideIndex
+      attachEduSwipeListeners(slideIndex);
     }, 200);
   }
 
+/**
+   * Dodaje touch gesture listener-e na edu slide
+   * Swipe levo = sledeći slide
+   * Swipe desno = prethodni slide
+   */
+  function attachEduSwipeListeners(currentIndex) {
+    const slideEl = document.querySelector('.edu-slide');
+    if (!slideEl) return;
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+    const SWIPE_THRESHOLD = 50; // minimum 50px za triggerovanje swipe-a
+
+    slideEl.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+
+    slideEl.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      touchEndY = e.changedTouches[0].screenY;
+
+      const deltaX = touchEndX - touchStartX;
+      const deltaY = touchEndY - touchStartY;
+
+      // Ignoriši vertikalne swipe-ove (verovatno scroll)
+      if (Math.abs(deltaY) > Math.abs(deltaX)) return;
+
+      // Ignoriši premale pokrete
+      if (Math.abs(deltaX) < SWIPE_THRESHOLD) return;
+
+      if (deltaX < 0) {
+        // Swipe levo → sledeći slide (ako nije poslednji)
+        if (currentIndex < eduSlides.length - 1) {
+          showEduBlock(currentIndex + 1);
+        } else {
+          // Ako je poslednji, swipe levo idi na calculating
+          showCalculating();
+        }
+      } else {
+        // Swipe desno → prethodni slide (ako nije prvi)
+        if (currentIndex > 0) {
+          showEduBlock(currentIndex - 1);
+        }
+      }
+    }, { passive: true });
+  }
 
   function getEduIcon(iconType) {
     const icons = {
