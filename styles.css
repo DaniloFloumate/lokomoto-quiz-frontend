@@ -1,0 +1,1001 @@
+/* ============================================
+   LOKOMOTO QUIZ - GLOBAL STYLES
+   ============================================ */
+
+/* Design tokens */
+:root {
+  --color-primary: #16a29d;
+  --color-primary-dark: #128882;
+  --color-primary-light: #1bbab4;
+
+  --color-text: #1a1a1a;
+  --color-text-muted: #6b7280;
+
+  --color-bg: #ffffff;
+  --color-card: #f5f5fa;
+  --color-card-hover: #ececf5;
+  --color-border: #e5e7eb;
+
+  --color-error: #ef4444;
+  --color-success: #10b981;
+
+  --font-primary: 'Instrument Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+}
+
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-primary);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+
+/* ============================================
+   LAYOUT - Quiz container
+   ============================================ */
+
+.quiz-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px 20px 80px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .quiz-container {
+    padding: 48px 24px 80px;
+  }
+}
+
+/* ============================================
+   QUIZ HEADER (back dugme + progress bar)
+   ============================================ */
+
+.quiz-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.quiz-header__back {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--color-card);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.quiz-header__back:hover {
+  background-color: var(--color-card-hover);
+  color: var(--color-text);
+}
+
+.quiz-header__back.hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ============================================
+   PROGRESS BAR
+   ============================================ */
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background-color: var(--color-card);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  transition: opacity var(--transition-base);
+}
+
+.progress-bar.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.progress-bar__fill {
+  height: 100%;
+  background-color: var(--color-primary);
+  border-radius: var(--radius-pill);
+  width: 0%;
+  transition: width 400ms ease;
+}
+
+
+/* ============================================
+   SCREEN — Pojedinačan ekran (pitanje, intro, etc.)
+   ============================================ */
+
+.quiz-screens {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  animation: fadeIn 350ms ease;
+}
+
+.screen.hidden {
+  display: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.screen__title {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--color-text);
+  margin-bottom: 24px;
+}
+
+@media (min-width: 768px) {
+  .screen__title {
+    font-size: 26px;
+  }
+}
+
+.screen__subtitle {
+  font-size: 15px;
+  color: var(--color-text-muted);
+  margin-bottom: 16px;
+}
+
+
+/* ============================================
+   OPTIONS LIST (A/B/C odgovori)
+   ============================================ */
+
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+  list-style: none;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  background-color: var(--color-card);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--color-text);
+  transition: all var(--transition-fast);
+}
+
+.option:hover {
+  background-color: var(--color-card-hover);
+}
+
+.option__indicator {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: #d1d5db;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.option__indicator::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: white;
+  transform: scale(0);
+  transition: transform var(--transition-fast);
+}
+
+.option.selected {
+  background-color: rgba(22, 162, 157, 0.08);
+  border-color: var(--color-primary);
+}
+
+.option.selected .option__indicator {
+  background-color: var(--color-primary);
+}
+
+.option.selected .option__indicator::after {
+  transform: scale(1);
+}
+
+.option__text {
+  flex: 1;
+}
+
+
+/* ============================================
+   BUTTONS - NAVIGACIJA (Nastavi, Nazad)
+   ============================================ */
+
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 24px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn--primary {
+  background-color: var(--color-primary);
+  color: white;
+  flex: 1;
+}
+
+.btn--primary:hover:not(:disabled) {
+  background-color: var(--color-primary-dark);
+}
+
+.btn--primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn--back {
+  background-color: var(--color-card);
+  color: var(--color-text-muted);
+  width: 56px;
+  flex-shrink: 0;
+  font-size: 18px;
+}
+
+.btn--back:hover {
+  background-color: var(--color-card-hover);
+}
+
+
+/* ============================================
+   LOADING / UTILITY
+   ============================================ */
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  font-size: 15px;
+  color: var(--color-text-muted);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ============================================
+   GENDER SELECTION SCREEN
+   ============================================ */
+
+.gender-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.gender-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 28px;
+  background-color: var(--color-card);
+  border: 2px solid transparent;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+  transition: all var(--transition-fast);
+}
+
+.gender-card:hover {
+  background-color: var(--color-card-hover);
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.gender-card__label {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.gender-card__arrow {
+  font-size: 24px;
+  color: var(--color-primary);
+  transition: transform var(--transition-fast);
+}
+
+.gender-card:hover .gender-card__arrow {
+  transform: translateX(4px);
+}
+
+
+/* ============================================
+   ERROR STATE
+   ============================================ */
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 400px;
+  gap: 16px;
+}
+
+/* ============================================
+   CONCLUSION SCREEN (sa statistikom posle pitanja)
+   ============================================ */
+
+.conclusion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 32px 0;
+}
+
+.conclusion__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  margin-bottom: 24px;
+  background-color: rgba(22, 162, 157, 0.1);
+  color: var(--color-primary);
+  border-radius: 50%;
+}
+
+.conclusion__title {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--color-text);
+  margin-bottom: 16px;
+  max-width: 480px;
+}
+
+@media (min-width: 768px) {
+  .conclusion__title {
+    font-size: 26px;
+  }
+}
+
+.conclusion__highlight {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.conclusion__text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+  margin-bottom: 32px;
+  max-width: 480px;
+}
+
+.conclusion .actions {
+  width: 100%;
+  max-width: 480px;
+}
+
+/* ============================================
+   SCALE / SLIDER (1-10)
+   ============================================ */
+
+.scale-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 0 32px;
+}
+
+.scale-value {
+  font-size: 96px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-primary);
+  margin-bottom: 32px;
+  font-variant-numeric: tabular-nums;
+  transition: color 200ms ease;
+}
+
+@media (min-width: 768px) {
+  .scale-value {
+    font-size: 120px;
+  }
+}
+
+.scale-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.scale-slider {
+  --scale-progress: 50%;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(
+    to right,
+    #10b981 0%,
+    #f59e0b 50%,
+    #ef4444 100%
+  );
+  outline: none;
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+
+/* Webkit (Chrome, Safari, Edge) */
+.scale-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: white;
+  border: 4px solid var(--color-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  cursor: grab;
+  transition: transform 150ms ease;
+}
+
+.scale-slider::-webkit-slider-thumb:active {
+  transform: scale(1.15);
+  cursor: grabbing;
+}
+
+/* Firefox */
+.scale-slider::-moz-range-thumb {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: white;
+  border: 4px solid var(--color-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  cursor: grab;
+  transition: transform 150ms ease;
+}
+
+.scale-slider::-moz-range-thumb:active {
+  transform: scale(1.15);
+}
+
+.scale-numbers {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  padding: 0 4px;
+}
+
+/* ============================================
+   CONCLUSION CALLOUT (istaknut blok unutar conclusion-a)
+   ============================================ */
+
+.conclusion__callout {
+  background-color: var(--color-card);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-text);
+  text-align: center;
+  margin-bottom: 32px;
+  max-width: 480px;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .conclusion__callout {
+    padding: 24px 28px;
+    font-size: 16px;
+  }
+}
+
+/* Alert variant - za conclusion-e koji upozoravaju na problem */
+.conclusion__icon--alert {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+/* ============================================
+   MULTI-SELECT CHECKBOX (umesto radio button-a)
+   ============================================ */
+
+.option--multiselect .option__checkbox {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background-color: white;
+  border: 2px solid #d1d5db;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all var(--transition-fast);
+}
+
+.option--multiselect .option__checkbox::after {
+  content: '';
+  width: 12px;
+  height: 7px;
+  border-left: 2.5px solid white;
+  border-bottom: 2.5px solid white;
+  transform: rotate(-45deg) scale(0);
+  transform-origin: center;
+  margin-top: -2px;
+  transition: transform var(--transition-fast);
+}
+
+.option--multiselect.selected .option__checkbox {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.option--multiselect.selected .option__checkbox::after {
+  transform: rotate(-45deg) scale(1);
+}
+
+/* Sakrij default radio indicator za multi-select opcije */
+.option--multiselect .option__indicator {
+  display: none;
+}
+
+/* ============================================
+   EDU SLIDESHOW (full-screen slide-ovi)
+   ============================================ */
+
+.edu-slide {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  /* DRŽI ovaj red */
+  padding: 32px 24px;
+  color: white;
+  text-align: center;
+  overflow: hidden;
+  transition: background-color 300ms ease;  /* DODAJ ovaj red */
+}
+
+/* Na malim ekranima dozvoli skrolovanje ako tekst preli */
+@media (max-height: 600px) {
+  .edu-slide {
+    justify-content: flex-start;
+    overflow-y: auto;
+  }
+}
+
+@media (min-width: 768px) {
+  .edu-slide {
+    padding: 48px 32px;
+  }
+}
+
+.edu-slide--warning {
+  background-color: #c81e1e;
+}
+
+.edu-slide--positive {
+  background-color: var(--color-primary);
+}
+
+.edu-slide__dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 48px;  /* Vrati ovaj red */
+  /* obriši position: absolute, top, left, right */
+}
+
+.edu-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  transition: all var(--transition-fast);
+}
+
+.edu-dot--active {
+  background-color: white;
+  width: 28px;
+  border-radius: var(--radius-pill);
+}
+
+.edu-dot--passed {
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.edu-slide__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 24px 0;
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+
+.edu-slide__icon {
+  margin-bottom: 32px;
+  color: white;
+  opacity: 0.95;
+}
+
+.edu-slide__heading {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-bottom: 20px;
+  color: white;
+}
+
+@media (min-width: 768px) {
+  .edu-slide__heading {
+    font-size: 32px;
+  }
+}
+
+.edu-slide__text {
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.92);
+  max-width: 420px;
+}
+
+@media (min-width: 768px) {
+  .edu-slide__text {
+    font-size: 17px;
+  }
+}
+
+.edu-slide__actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.btn--edu {
+  background-color: white;
+  color: #1a1a1a;
+  padding: 18px 64px;
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: all var(--transition-fast);
+  min-width: 280px;
+}
+
+.btn--edu:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* ============================================
+   BODY BACKGROUND za edu slide-ove
+   Postavlja se ODMAH, sprečava flash bele pozadine
+   ============================================ */
+
+body.edu-bg-warning {
+  background-color: #c81e1e;
+}
+
+body.edu-bg-positive {
+  background-color: var(--color-primary);
+}
+
+/* ============================================
+   CALCULATING ANIMACIJA (3 sek 0% → 100%)
+   ============================================ */
+
+.calculating {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 70vh;
+  padding: 32px 0;
+}
+
+.calculating__progress-wrapper {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin-bottom: 40px;
+}
+
+.calculating__circle {
+  display: block;
+}
+
+.calculating__percentage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--color-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 768px) {
+  .calculating__percentage {
+    font-size: 48px;
+  }
+}
+
+.calculating__title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+@media (min-width: 768px) {
+  .calculating__title {
+    font-size: 26px;
+  }
+}
+
+.calculating__message {
+  font-size: 15px;
+  color: var(--color-text-muted);
+  transition: opacity 150ms ease;
+  min-height: 24px; /* Sprečava skok layout-a kad se menja text */
+}
+
+/* ============================================
+   LEAD FORM SCREEN
+   ============================================ */
+
+.lead-form-screen {
+  display: flex;
+  flex-direction: column;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 24px 0;
+}
+
+.lead-form__header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.lead-form__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  background-color: rgba(22, 162, 157, 0.12);
+  color: var(--color-primary);
+  border-radius: 50%;
+}
+
+.lead-form__title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 12px;
+  line-height: 1.25;
+}
+
+@media (min-width: 768px) {
+  .lead-form__title {
+    font-size: 28px;
+  }
+}
+
+.lead-form__subtitle {
+  font-size: 15px;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.lead-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+
+.form-field .required {
+  color: #ef4444;
+}
+
+.form-field input {
+  padding: 16px 18px;
+  font-size: 16px;
+  font-family: inherit;
+  color: var(--color-text);
+  background-color: var(--color-card);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.form-field input:focus {
+  outline: none;
+  background-color: white;
+  border-color: var(--color-primary);
+}
+
+.form-field input::placeholder {
+  color: #9ca3af;
+}
+
+.form-field input.input--error {
+  border-color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.04);
+}
+
+.form-field__error {
+  display: block;
+  font-size: 13px;
+  color: #ef4444;
+  margin-top: 6px;
+  min-height: 18px;
+}
+
+.lead-form .btn--large {
+  margin-top: 12px;
+}
+
+.lead-form__trust {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
+}
+
+@media (min-width: 480px) {
+  .lead-form__trust {
+    flex-direction: row;
+    justify-content: center;
+    gap: 24px;
+  }
+}
+
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.trust-item svg {
+  flex-shrink: 0;
+  color: var(--color-primary);
+}
