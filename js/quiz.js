@@ -1022,7 +1022,7 @@ const Quiz = (function() {
   }
 
   // Globalna referenca na trenutnog swipe handler-a (za cleanup)
-  let currentSwipeCleanup = null;
+  currentSwipeCleanup = null;
 
 /**
    * Dodaje touch gesture listener-e na edu slide
