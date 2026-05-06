@@ -999,3 +999,31 @@ body.edu-bg-positive {
   flex-shrink: 0;
   color: var(--color-primary);
 }
+
+/* ============================================
+   GLOBAL CENTERING — naslovi i paragrafi
+   Konzistentno po celom kvizu
+   ============================================ */
+
+.screen__title,
+.screen__subtitle {
+  text-align: center;
+}
+
+/* Conclusion screen — naslov i tekst */
+.conclusion__title,
+.conclusion__text {
+  text-align: center;
+}
+
+/* Edu slide-ovi su već centrirani ali za svaki slučaj */
+.edu-slide__heading,
+.edu-slide__text {
+  text-align: center;
+}
+
+/* Lead form */
+.lead-form__title,
+.lead-form__subtitle {
+  text-align: center;
+}

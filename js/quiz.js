@@ -1291,13 +1291,20 @@ const Quiz = (function() {
     const diagnosis = State.getAnswer('diagnosis');
     const allAnswers = State.getAllAnswers();
 
-    const VSL_URLS = {
-      muscle: 'https://kviz.lokomoto.rs/misicni-bol',
-      hernia: 'https://kviz.lokomoto.rs/diskus-hernija',
+    // Mapiranje dijagnoze na URL putanju
+    const VSL_PATHS = {
+      muscle: '/misicni-bol',
+      hernia: '/diskus-hernija',
     };
 
-    const baseUrl = VSL_URLS[diagnosis] || VSL_URLS.muscle;
+    const path = VSL_PATHS[diagnosis] || VSL_PATHS.muscle;
 
+    // Koristi trenutni origin (radi i na staging-u i na produkciji)
+    // Sa lokomoto.webflow.io → ide na lokomoto.webflow.io/misicni-bol
+    // Sa kviz.lokomoto.rs → ide na kviz.lokomoto.rs/misicni-bol
+    const baseUrl = `${window.location.origin}${path}`;
+
+    // Parametri za Pain Profile karticu
     const params = new URLSearchParams({
       pain_desc: allAnswers.pain_description?.text || '',
       duration: allAnswers.pain_duration || '',
