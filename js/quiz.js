@@ -84,6 +84,12 @@ const Quiz = (function() {
   // ============================================
 
   function setScreen(html, screenName, screenNumber = null, opts = {}) {
+    // Cleanup swipe listener-a kad pređemo van edu slideshow-a
+    if (screenName !== 'edu_block' && currentSwipeCleanup) {
+      currentSwipeCleanup();
+      currentSwipeCleanup = null;
+    }
+    
     // Reset body class (skida edu pozadinu kad pređemo dalje)
     if (screenName !== 'edu_block') {
       document.body.className = '';
@@ -1009,54 +1015,93 @@ const Quiz = (function() {
     }, 200);
   }
 
-/**
+  // Globalna referenca na trenutnog swipe handler-a (za cleanup)
+  let currentSwipeCleanup = null;
+
+  /**
    * Dodaje touch gesture listener-e na edu slide
    * Swipe levo = sledeći slide
    * Swipe desno = prethodni slide
    */
   function attachEduSwipeListeners(currentIndex) {
+    // Cleanup prethodnog handler-a (sprečava duplo registrovanje)
+    if (currentSwipeCleanup) {
+      currentSwipeCleanup();
+      currentSwipeCleanup = null;
+    }
+
     const slideEl = document.querySelector('.edu-slide');
     if (!slideEl) return;
 
     let touchStartX = 0;
     let touchStartY = 0;
-    let touchEndX = 0;
-    let touchEndY = 0;
-    const SWIPE_THRESHOLD = 50; // minimum 50px za triggerovanje swipe-a
+    let touchStartTime = 0;
+    let isSwiping = false;
 
-    slideEl.addEventListener('touchstart', (e) => {
-      touchStartX = e.changedTouches[0].screenX;
-      touchStartY = e.changedTouches[0].screenY;
-    }, { passive: true });
+    const SWIPE_THRESHOLD = 60;        // minimum 60px za swipe
+    const MAX_SWIPE_TIME = 500;        // max 500ms za brz swipe
+    const VERTICAL_TOLERANCE = 75;     // ako je vertikalni pokret veći od 75px → ignoriši (scroll)
 
-    slideEl.addEventListener('touchend', (e) => {
-      touchEndX = e.changedTouches[0].screenX;
-      touchEndY = e.changedTouches[0].screenY;
+    function handleTouchStart(e) {
+      const touch = e.changedTouches[0];
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+      touchStartTime = Date.now();
+      isSwiping = true;
+    }
 
-      const deltaX = touchEndX - touchStartX;
-      const deltaY = touchEndY - touchStartY;
+    function handleTouchEnd(e) {
+      if (!isSwiping) return;
+      isSwiping = false;
 
-      // Ignoriši vertikalne swipe-ove (verovatno scroll)
-      if (Math.abs(deltaY) > Math.abs(deltaX)) return;
+      const touch = e.changedTouches[0];
+      const deltaX = touch.clientX - touchStartX;
+      const deltaY = touch.clientY - touchStartY;
+      const elapsed = Date.now() - touchStartTime;
 
-      // Ignoriši premale pokrete
+      // Predugo trajao = nije swipe (verovatno korisnik zadržao prst)
+      if (elapsed > MAX_SWIPE_TIME) return;
+
+      // Premali horizontalni pomeraj
       if (Math.abs(deltaX) < SWIPE_THRESHOLD) return;
 
+      // Preveliki vertikalni pomeraj = scroll, ne swipe
+      if (Math.abs(deltaY) > VERTICAL_TOLERANCE) return;
+
+      // Vertikalni pomeraj veći od horizontalnog = nije swipe
+      if (Math.abs(deltaY) > Math.abs(deltaX)) return;
+
+      // Validan swipe
       if (deltaX < 0) {
-        // Swipe levo → sledeći slide (ako nije poslednji)
+        // Swipe levo → sledeći slide
         if (currentIndex < eduSlides.length - 1) {
           showEduBlock(currentIndex + 1);
         } else {
-          // Ako je poslednji, swipe levo idi na calculating
+          // Poslednji slide → idi na calculating
           showCalculating();
         }
       } else {
-        // Swipe desno → prethodni slide (ako nije prvi)
+        // Swipe desno → prethodni slide
         if (currentIndex > 0) {
           showEduBlock(currentIndex - 1);
         }
       }
-    }, { passive: true });
+    }
+
+    function handleTouchCancel() {
+      isSwiping = false;
+    }
+
+    slideEl.addEventListener('touchstart', handleTouchStart, { passive: true });
+    slideEl.addEventListener('touchend', handleTouchEnd, { passive: true });
+    slideEl.addEventListener('touchcancel', handleTouchCancel, { passive: true });
+
+    // Cleanup funkcija (uklanja listener-e kad se pređe na novi slide)
+    currentSwipeCleanup = () => {
+      slideEl.removeEventListener('touchstart', handleTouchStart);
+      slideEl.removeEventListener('touchend', handleTouchEnd);
+      slideEl.removeEventListener('touchcancel', handleTouchCancel);
+    };
   }
 
   function getEduIcon(iconType) {
