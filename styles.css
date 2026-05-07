@@ -658,12 +658,17 @@ input:focus-visible {
 
   display: flex;
   flex-direction: column;
-  justify-content: center;  /* DRŽI ovaj red */
+  justify-content: center;
   padding: 32px 24px;
   color: white;
   text-align: center;
   overflow: hidden;
-  transition: background-color 300ms ease;  /* DODAJ ovaj red */
+  transition: background-color 300ms ease, opacity 250ms ease;
+}
+
+.edu-slide--entering {
+  opacity: 0;
+  visibility: hidden;
 }
 
 /* Na malim ekranima dozvoli skrolovanje ako tekst preli */
@@ -1026,21 +1031,4 @@ body.edu-bg-positive {
 .lead-form__title,
 .lead-form__subtitle {
   text-align: center;
-}
-
-/* ============================================
-   EDU SLIDE - smooth entry (sprečava flash pri prvom učitavanju)
-   ============================================ */
-
-.edu-slide {
-  transition: opacity 200ms ease;
-}
-
-.edu-slide--entering {
-  opacity: 0;
-  visibility: hidden;
-}
-
-.edu-slide {
-  visibility: visible;
 }
