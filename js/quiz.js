@@ -930,8 +930,9 @@ const Quiz = (function() {
     const iconSvg = getEduIcon(slide.icon);
     const textHtml = slide.text ? `<p class="edu-slide__text">${slide.text}</p>` : '';
 
+    // Slide počinje sa opacity 0 (nevidljiv) → fade-in u sledećem frame-u
     const html = `
-      <div class="edu-slide ${isPositive ? 'edu-slide--positive' : 'edu-slide--warning'}">
+      <div class="edu-slide ${isPositive ? 'edu-slide--positive' : 'edu-slide--warning'} edu-slide--entering">
         <div class="edu-slide__dots">${dotsHtml}</div>
 
         <div class="edu-slide__content" id="eduContent">
@@ -948,6 +949,16 @@ const Quiz = (function() {
 
     setScreen(html, 'edu_block', 18);
 
+    // U sledećem frame-u skini "entering" klasu → fade-in
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const slideEl = document.querySelector('.edu-slide');
+        if (slideEl) {
+          slideEl.classList.remove('edu-slide--entering');
+        }
+      });
+    });
+
     document.getElementById('continueBtn').addEventListener('click', () => {
       if (isLast) {
         showCalculating();
@@ -956,7 +967,6 @@ const Quiz = (function() {
       }
     });
 
-    // Aktiviraj swipe gestures za mobilne uređaje
     attachEduSwipeListeners(slideIndex);
   }
 
