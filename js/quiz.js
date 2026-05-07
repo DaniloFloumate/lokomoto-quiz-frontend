@@ -1201,6 +1201,12 @@ const Quiz = (function() {
   // ============================================
 
   function showCalculating() {
+    // Ukloni edu slide ako postoji u body-ju
+    const eduSlide = document.querySelector('.edu-slide');
+    if (eduSlide) eduSlide.remove();
+    
+    // Reset body class
+    document.body.className = '';
     const messages = [
       'Analiziram tvoje odgovore...',
       'Identifikujem obrazac bola...',
