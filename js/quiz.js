@@ -885,22 +885,22 @@ const Quiz = (function() {
       return;
     }
 
-    // PRVI ulazak u edu — koristi tranziciju da se sakrije glitch
-    // Korak 1: prikaži prazan crveni overlay
+    // PRVI ulazak u edu — overlay maska sakriva glitch
+    // Korak 1: kreiraj overlay (z-index 200, prekriva sve)
     const overlay = document.createElement('div');
     overlay.className = `edu-transition-overlay ${isPositive ? 'edu-slide--positive' : 'edu-slide--warning'}`;
     document.body.appendChild(overlay);
 
-    // Korak 2: posle 250ms (overlay već prekriva sve), renderuj pravi slide ispod
-    setTimeout(() => {
-      renderEduSlide(slideIndex);
+    // Korak 2: ODMAH renderuj slide ispod overlay-a
+    // Slide se layoutuje dok je overlay vidljiv → korisnik ne vidi glitch
+    renderEduSlide(slideIndex);
 
-      // Korak 3: posle još 50ms (slide je već renderovan), ukloni overlay
-      setTimeout(() => {
-        overlay.style.opacity = '0';
-        setTimeout(() => overlay.remove(), 200);
-      }, 50);
-    }, 250);
+    // Korak 3: sačekaj 500ms (slide se kompletno layoutovao + browser stabilan)
+    // pa onda fade-out overlay
+    setTimeout(() => {
+      overlay.style.opacity = '0';
+      setTimeout(() => overlay.remove(), 300);
+    }, 500);
   }
 
 
