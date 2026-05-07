@@ -371,7 +371,7 @@ const Quiz = (function() {
 
     document.getElementById('continueBtn').addEventListener('click', () => {
         setTimeout(() => {
-            showSomething();
+            showPainRadiates();
         }, 25);
     });
   }
@@ -774,7 +774,7 @@ const Quiz = (function() {
 
     document.getElementById('continueBtn').addEventListener('click', () => {
         setTimeout(() => {
-            showSomething();
+            showAbcQuestion('pain_when', 10);
         }, 25);
     });
   }
