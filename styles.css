@@ -1038,4 +1038,9 @@ body.edu-bg-positive {
 
 .edu-slide--entering {
   opacity: 0;
+  visibility: hidden;
+}
+
+.edu-slide {
+  visibility: visible;
 }
