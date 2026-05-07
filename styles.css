@@ -1033,7 +1033,7 @@ body.edu-bg-positive {
    ============================================ */
 
 .edu-slide {
-  transition: opacity 200ms ease;
+  transition: opacity 0ms ease;
 }
 
 .edu-slide--entering {
