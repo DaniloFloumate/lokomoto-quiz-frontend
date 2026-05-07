@@ -16,7 +16,9 @@ const Quiz = (function() {
 
   // Privremeni opts kada se zove showScreenByName (npr. za back navigation)
   let pendingScreenOpts = null;
-  
+
+  // Globalna referenca na trenutnog swipe handler-a (za cleanup)
+  let currentSwipeCleanup = null;
 
   // Total screens (za progress kalkulaciju) — 22 ukupno
   const TOTAL_SCREENS = 22;
@@ -85,11 +87,6 @@ const Quiz = (function() {
   // ============================================
 
   function setScreen(html, screenName, screenNumber = null, opts = {}) {
-    // Cleanup edu slide iz body-ja (ako postoji)
-    const eduSlide = document.querySelector('.edu-slide');
-    if (eduSlide && screenName !== 'edu_block') {
-      eduSlide.remove();
-    }
     // Cleanup swipe listener-a kad pređemo van edu slideshow-a
     if (screenName !== 'edu_block' && currentSwipeCleanup) {
       currentSwipeCleanup();
@@ -100,7 +97,7 @@ const Quiz = (function() {
     if (screenName !== 'edu_block') {
       document.body.className = '';
     }
-    
+
     // Merge sa pendingScreenOpts (postavlja showScreenByName kad ide back)
     if (pendingScreenOpts) {
       opts = { ...opts, ...pendingScreenOpts };
@@ -136,7 +133,6 @@ const Quiz = (function() {
       currentBackHandler = null;
     } else {
       globalBackBtn.classList.remove('hidden');
-      // Custom back handler ili default (nazad na prethodni screen iz history-ja)
       currentBackHandler = opts.backHandler || (() => goBack());
     }
 
@@ -163,17 +159,14 @@ const Quiz = (function() {
       return;
     }
 
-    // Pozovi funkciju za taj screen sa flag-om da ne dodaje u history
     showScreenByName(targetScreen, { isBackNavigation: true });
   }
 
 
   /**
    * Pomoćna funkcija - poziva show* funkciju po imenu screen-a
-   * @param {object} opts - prosleđuje se setScreen-u (npr. isBackNavigation)
    */
   function showScreenByName(screenName, opts = {}) {
-    // Privremeno čuvamo opts u modulu da setScreen može da ih pročita
     pendingScreenOpts = opts;
 
     const map = {
@@ -194,7 +187,7 @@ const Quiz = (function() {
       accompanying_feeling: () => showAbcQuestion('accompanying_feeling', 15),
       previous_attempts: () => showAbcQuestion('previous_attempts', 16),
       goals: () => showGoals(),
-      edu_block: () => showEduBlock(),    // ← novi red
+      edu_block: () => showEduBlock(),
     };
 
     const fn = map[screenName];
@@ -229,7 +222,6 @@ const Quiz = (function() {
       </div>
     `;
 
-    // Prvi screen — bez back dugmeta (4. parametar = null)
     setScreen(html, 'gender', 1, { hideBack: true });
 
     document.querySelectorAll('.gender-card').forEach(card => {
@@ -241,7 +233,6 @@ const Quiz = (function() {
   async function handleGenderSelect(gender) {
     State.setAnswer('gender', gender);
 
-    // Loguj completion + update sesiju
     const timeOnStep = State.getTimeOnCurrentScreen();
     const sessionId = State.getSessionId();
 
@@ -259,12 +250,11 @@ const Quiz = (function() {
       }),
     ]);
 
-    // Idi na sledeći — TODO: pain location
     showPainLocation();
   }
 
 
-// ============================================
+  // ============================================
   // SCREEN: PAIN LOCATION (Vrat / Srednja / Donja leđa)
   // ============================================
 
@@ -289,10 +279,8 @@ const Quiz = (function() {
       </div>
     `;
 
-    // Back vodi na gender screen
     setScreen(html, 'pain_location', 2);
 
-    // Auto-next na klik
     document.querySelectorAll('.option').forEach(opt => {
       opt.addEventListener('click', () => {
         document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
@@ -327,7 +315,6 @@ const Quiz = (function() {
       }),
     ]);
 
-    // Prikaži zaključak sa procentom
     showPainLocationConclusion(location);
   }
 
@@ -371,23 +358,22 @@ const Quiz = (function() {
       </div>
     `;
 
-    // Back vodi na pain location izbor
     setScreen(html, 'pain_location_conclusion', 3);
 
     document.getElementById('continueBtn').addEventListener('click', () => {
-        setTimeout(() => {
-            showPainRadiates();
-        }, 400);
+      setTimeout(() => {
+        showPainRadiates();
+      }, 50);
     });
   }
 
-// ============================================
+
+  // ============================================
   // SCREEN: PAIN RADIATES (DA/NE → diagnosis)
   // ============================================
 
   function showPainRadiates() {
     const painLocation = State.getAnswer('pain_location');
-    // Vrat i srednja leđa = ruka, donja leđa = noga
     const bodyPart = painLocation === 'lower' ? 'nogu' : 'ruku';
 
     const html = `
@@ -408,7 +394,6 @@ const Quiz = (function() {
 
     setScreen(html, 'pain_radiates', 4);
 
-    // Auto-next na klik
     document.querySelectorAll('.option').forEach(opt => {
       opt.addEventListener('click', () => {
         document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
@@ -416,7 +401,6 @@ const Quiz = (function() {
         document.querySelectorAll('.option').forEach(o => o.disabled = true);
 
         setTimeout(() => {
-          // 'true'/'false' string iz dataset-a → boolean
           const radiates = opt.dataset.radiates === 'true';
           handlePainRadiatesSelect(radiates);
         }, 25);
@@ -427,7 +411,6 @@ const Quiz = (function() {
 
   async function handlePainRadiatesSelect(radiates) {
     State.setAnswer('pain_radiates', radiates);
-    // diagnosis se automatski postavlja kroz state.js (pain_radiates → diagnosis)
     const diagnosis = State.getAnswer('diagnosis');
 
     const timeOnStep = State.getTimeOnCurrentScreen();
@@ -448,13 +431,12 @@ const Quiz = (function() {
       }),
     ]);
 
-    // Idi na sledeći — TODO: pain frequency (A/B/C)
-    showAbcQuestion('pain_frequency', 5, () => showPainRadiates());
+    showAbcQuestion('pain_frequency', 5);
   }
 
-// ============================================
+
+  // ============================================
   // UNIVERZALNI A/B/C SCREEN
-  // Koristi Questions config za bilo koje A/B/C pitanje
   // ============================================
 
   function showAbcQuestion(questionKey, screenNumber) {
@@ -485,7 +467,6 @@ const Quiz = (function() {
 
     setScreen(html, questionKey, screenNumber);
 
-    // Auto-next na klik
     document.querySelectorAll('.option').forEach(opt => {
       opt.addEventListener('click', () => {
         document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
@@ -509,7 +490,6 @@ const Quiz = (function() {
     const timeOnStep = State.getTimeOnCurrentScreen();
     const sessionId = State.getSessionId();
 
-    // Update sesije — odgovor ide u `answers` JSONB polje
     const allAnswers = State.getAllAnswers();
     await Promise.all([
       API.updateSession(sessionId, {
@@ -535,15 +515,10 @@ const Quiz = (function() {
       }),
     ]);
 
-    // Idi na sledeće pitanje na osnovu trenutnog
     routeNextAbc(questionKey);
   }
 
 
-  /**
-   * Routes na sledeći screen na osnovu trenutnog pitanja
-   * Redosled: pain_frequency → pain_description → pain_scale (TODO) → ...
-   */
   function routeNextAbc(currentQuestion) {
     const flow = {
       pain_frequency: () => showAbcQuestion('pain_description', 6),
@@ -564,8 +539,9 @@ const Quiz = (function() {
       console.warn(`No next screen for ${currentQuestion}`);
     }
   }
-  
-// ============================================
+
+
+  // ============================================
   // SCREEN: PAIN SCALE (slider 1-10)
   // ============================================
 
@@ -613,16 +589,14 @@ const Quiz = (function() {
     let userInteracted = State.getAnswer('pain_scale') !== null;
     if (userInteracted) continueBtn.disabled = false;
 
-    // Update vizuelne pozadine slidera (gradient od zelene do crvene)
     function updateSliderBg(value) {
       const percentage = ((value - 1) / 9) * 100;
       slider.style.setProperty('--scale-progress', `${percentage}%`);
 
-      // Boja vrednosti se menja
       let color;
-      if (value <= 3) color = '#10b981';      // zelena
-      else if (value <= 6) color = '#f59e0b'; // žuta/narandžasta
-      else color = '#ef4444';                  // crvena
+      if (value <= 3) color = '#10b981';
+      else if (value <= 6) color = '#f59e0b';
+      else color = '#ef4444';
 
       valueDisplay.style.color = color;
     }
@@ -634,7 +608,6 @@ const Quiz = (function() {
       valueDisplay.textContent = value;
       updateSliderBg(value);
 
-      // Aktiviraj NASTAVI tek kad korisnik prvi put pomeri slider
       if (!userInteracted) {
         userInteracted = true;
         continueBtn.disabled = false;
@@ -671,8 +644,9 @@ const Quiz = (function() {
     showPainDuration();
   }
 
-// ============================================
-  // SCREEN: PAIN DURATION (koliko dugo traje bol)
+
+  // ============================================
+  // SCREEN: PAIN DURATION
   // ============================================
 
   function showPainDuration() {
@@ -702,7 +676,6 @@ const Quiz = (function() {
 
     setScreen(html, 'pain_duration', 8);
 
-    // Auto-next na klik
     document.querySelectorAll('.option').forEach(opt => {
       opt.addEventListener('click', () => {
         document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
@@ -745,11 +718,7 @@ const Quiz = (function() {
 
 
   // ============================================
-  // SCREEN: MID CONCLUSION (zaključak posle prvog dela kviza)
-  // ============================================
-
-  // ============================================
-  // SCREEN: MID CONCLUSION (zaključak posle prvog dela kviza)
+  // SCREEN: MID CONCLUSION
   // ============================================
 
   function showMidConclusion() {
@@ -778,14 +747,15 @@ const Quiz = (function() {
     setScreen(html, 'mid_conclusion', 9);
 
     document.getElementById('continueBtn').addEventListener('click', () => {
-        setTimeout(() => {
-            showAbcQuestion('pain_when', 10);
-        }, 400);
+      setTimeout(() => {
+        showAbcQuestion('pain_when', 10);
+      }, 50);
     });
   }
 
-// ============================================
-  // SCREEN: GOALS (multi-select 6 ciljeva)
+
+  // ============================================
+  // SCREEN: GOALS (multi-select)
   // ============================================
 
   function showGoals() {
@@ -800,7 +770,7 @@ const Quiz = (function() {
 
     const currentlySelected = State.getAnswer('goals') || [];
 
-    const optionsHtml = goalsList.map((goal, idx) => {
+    const optionsHtml = goalsList.map((goal) => {
       const isSelected = currentlySelected.includes(goal);
       return `
         <button class="option option--multiselect ${isSelected ? 'selected' : ''}" data-goal="${goal.replace(/"/g, '&quot;')}">
@@ -831,7 +801,6 @@ const Quiz = (function() {
       opt.addEventListener('click', () => {
         opt.classList.toggle('selected');
 
-        // Aktiviraj NASTAVI ako je bar jedna selektovana
         const anySelected = document.querySelectorAll('.option.selected').length > 0;
         continueBtn.disabled = !anySelected;
       });
@@ -868,8 +837,9 @@ const Quiz = (function() {
     showEduBlock();
   }
 
-// ============================================
-  // SCREEN: EDU BLOK (slideshow sa 4 slajda)
+
+  // ============================================
+  // SCREEN: EDU BLOK (slideshow)
   // ============================================
 
   const eduSlides = [
@@ -900,78 +870,23 @@ const Quiz = (function() {
   ];
 
 
-  function renderEduSlide(slideIndex) {
+  function showEduBlock(slideIndex = 0) {
     const slide = eduSlides[slideIndex];
-    const isLast = slideIndex === eduSlides.length - 1;
     const isPositive = slide.type === 'positive';
 
-    const dotsHtml = eduSlides.map((_, idx) => `
-      <span class="edu-dot ${idx === slideIndex ? 'edu-dot--active' : ''} ${idx < slideIndex ? 'edu-dot--passed' : ''}"></span>
-    `).join('');
+    // Set body class odmah (sprečava flash bele pozadine)
+    document.body.className = isPositive ? 'edu-bg-positive' : 'edu-bg-warning';
 
-    const iconSvg = getEduIcon(slide.icon);
-    const textHtml = slide.text ? `<p class="edu-slide__text">${slide.text}</p>` : '';
+    const existingSlide = document.querySelector('.edu-slide');
 
-    // Pravimo edu slide kao zaseban DOM element (ne kroz innerHTML quiz-screens-a)
-    const slideHtml = `
-      <div class="edu-slide ${isPositive ? 'edu-slide--positive' : 'edu-slide--warning'} edu-slide--entering">
-        <div class="edu-slide__dots">${dotsHtml}</div>
+    if (existingSlide && State.getCurrentScreen() === 'edu_block') {
+      // Tranzicija unutar slideshow-a
+      animateEduSlideContent(slideIndex);
+      return;
+    }
 
-        <div class="edu-slide__content" id="eduContent">
-          <div class="edu-slide__icon">${iconSvg}</div>
-          <h2 class="edu-slide__heading">${slide.heading}</h2>
-          ${textHtml}
-        </div>
-
-        <div class="edu-slide__actions">
-          <button class="btn btn--edu" id="continueBtn">${isLast ? 'NASTAVI ›' : 'DALJE ›'}</button>
-        </div>
-      </div>
-    `;
-
-    // KLJUČNA PROMENA: Ubacujemo slide u body (NE u quiz-screens)
-    // Tako Goals screen ostaje vidljiv iza, dok se slide priprema
-    const wrapper = document.createElement('div');
-    wrapper.innerHTML = slideHtml;
-    const slideEl = wrapper.firstElementChild;
-    document.body.appendChild(slideEl);
-
-    // Postavi ostala stanja (state, progress bar, back btn)
-    State.setCurrentScreen('edu_block');
-    progressBar.classList.add('hidden');
-    globalBackBtn.classList.add('hidden');
-    currentBackHandler = null;
-
-    // Loguj 'step_viewed' event
-    API.logEvent(State.getSessionId(), 'step_viewed', {
-      step_number: 18,
-      step_name: 'edu_block',
-    });
-
-    // Sačekaj 2 frame-a + force layout, pa skini "entering" klasu (fade-in)
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        void slideEl.offsetHeight;
-        slideEl.classList.remove('edu-slide--entering');
-
-        // Posle fade-in animacije, čistimo screensContainer (Goals screen)
-        setTimeout(() => {
-          screensContainer.innerHTML = '';
-        }, 300);
-      });
-    });
-
-    document.getElementById('continueBtn').addEventListener('click', () => {
-      if (isLast) {
-        // Pre prelaska na calculating, uklonimo edu slide iz body-ja
-        slideEl.remove();
-        showCalculating();
-      } else {
-        showEduBlock(slideIndex + 1);
-      }
-    });
-
-    attachEduSwipeListeners(slideIndex);
+    // Prvi ulazak u edu (sa Goals screen-a)
+    renderEduSlide(slideIndex);
   }
 
 
@@ -987,9 +902,8 @@ const Quiz = (function() {
     const iconSvg = getEduIcon(slide.icon);
     const textHtml = slide.text ? `<p class="edu-slide__text">${slide.text}</p>` : '';
 
-    // Slide počinje sa opacity 0 (nevidljiv) → fade-in u sledećem frame-u
     const html = `
-      <div class="edu-slide ${isPositive ? 'edu-slide--positive' : 'edu-slide--warning'} edu-slide--entering">
+      <div class="edu-slide ${isPositive ? 'edu-slide--positive' : 'edu-slide--warning'}">
         <div class="edu-slide__dots">${dotsHtml}</div>
 
         <div class="edu-slide__content" id="eduContent">
@@ -1005,19 +919,6 @@ const Quiz = (function() {
     `;
 
     setScreen(html, 'edu_block', 18);
-
-    // Sačekaj 2 frame-a + force layout, pa skini "entering" klasu
-    // Tako garantujemo da je browser kompletno renderovao slide pre fade-in-a
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const slideEl = document.querySelector('.edu-slide');
-        if (slideEl) {
-          // Force sync layout (garantuje da je sve izračunato)
-          void slideEl.offsetHeight;
-          slideEl.classList.remove('edu-slide--entering');
-        }
-      });
-    });
 
     document.getElementById('continueBtn').addEventListener('click', () => {
       if (isLast) {
@@ -1041,16 +942,13 @@ const Quiz = (function() {
     const dotsContainer = document.querySelector('.edu-slide__dots');
     const continueBtn = document.getElementById('continueBtn');
 
-    // Update klasa za boju pozadine
     eduSlideEl.classList.remove('edu-slide--warning', 'edu-slide--positive');
     eduSlideEl.classList.add(isPositive ? 'edu-slide--positive' : 'edu-slide--warning');
 
-    // Fade-out trenutnog sadržaja
     contentEl.style.opacity = '0';
     contentEl.style.transform = 'translateY(8px)';
 
     setTimeout(() => {
-      // Update dot indicators
       const dots = dotsContainer.querySelectorAll('.edu-dot');
       dots.forEach((dot, idx) => {
         dot.classList.remove('edu-dot--active', 'edu-dot--passed');
@@ -1058,7 +956,6 @@ const Quiz = (function() {
         else if (idx < slideIndex) dot.classList.add('edu-dot--passed');
       });
 
-      // Update sadržaj
       const iconSvg = getEduIcon(slide.icon);
       const textHtml = slide.text ? `<p class="edu-slide__text">${slide.text}</p>` : '';
       contentEl.innerHTML = `
@@ -1067,10 +964,8 @@ const Quiz = (function() {
         ${textHtml}
       `;
 
-      // Update dugme
       continueBtn.textContent = isLast ? 'NASTAVI ›' : 'DALJE ›';
 
-      // Re-bind klik (jer setScreen je već prošao)
       const newBtn = continueBtn.cloneNode(true);
       continueBtn.parentNode.replaceChild(newBtn, continueBtn);
       newBtn.addEventListener('click', () => {
@@ -1081,25 +976,15 @@ const Quiz = (function() {
         }
       });
 
-      // Fade-in novog sadržaja
       contentEl.style.opacity = '1';
       contentEl.style.transform = 'translateY(0)';
 
-      // Re-attach swipe listenere za nov slideIndex
       attachEduSwipeListeners(slideIndex);
     }, 200);
   }
 
-  // Globalna referenca na trenutnog swipe handler-a (za cleanup)
-  let currentSwipeCleanup = null;
 
-  /**
-   * Dodaje touch gesture listener-e na edu slide
-   * Swipe levo = sledeći slide
-   * Swipe desno = prethodni slide
-   */
   function attachEduSwipeListeners(currentIndex) {
-    // Cleanup prethodnog handler-a (sprečava duplo registrovanje)
     if (currentSwipeCleanup) {
       currentSwipeCleanup();
       currentSwipeCleanup = null;
@@ -1113,9 +998,9 @@ const Quiz = (function() {
     let touchStartTime = 0;
     let isSwiping = false;
 
-    const SWIPE_THRESHOLD = 60;        // minimum 60px za swipe
-    const MAX_SWIPE_TIME = 500;        // max 500ms za brz swipe
-    const VERTICAL_TOLERANCE = 75;     // ako je vertikalni pokret veći od 75px → ignoriši (scroll)
+    const SWIPE_THRESHOLD = 60;
+    const MAX_SWIPE_TIME = 500;
+    const VERTICAL_TOLERANCE = 75;
 
     function handleTouchStart(e) {
       const touch = e.changedTouches[0];
@@ -1134,29 +1019,18 @@ const Quiz = (function() {
       const deltaY = touch.clientY - touchStartY;
       const elapsed = Date.now() - touchStartTime;
 
-      // Predugo trajao = nije swipe (verovatno korisnik zadržao prst)
       if (elapsed > MAX_SWIPE_TIME) return;
-
-      // Premali horizontalni pomeraj
       if (Math.abs(deltaX) < SWIPE_THRESHOLD) return;
-
-      // Preveliki vertikalni pomeraj = scroll, ne swipe
       if (Math.abs(deltaY) > VERTICAL_TOLERANCE) return;
-
-      // Vertikalni pomeraj veći od horizontalnog = nije swipe
       if (Math.abs(deltaY) > Math.abs(deltaX)) return;
 
-      // Validan swipe
       if (deltaX < 0) {
-        // Swipe levo → sledeći slide
         if (currentIndex < eduSlides.length - 1) {
           showEduBlock(currentIndex + 1);
         } else {
-          // Poslednji slide → idi na calculating
           showCalculating();
         }
       } else {
-        // Swipe desno → prethodni slide
         if (currentIndex > 0) {
           showEduBlock(currentIndex - 1);
         }
@@ -1171,13 +1045,13 @@ const Quiz = (function() {
     slideEl.addEventListener('touchend', handleTouchEnd, { passive: true });
     slideEl.addEventListener('touchcancel', handleTouchCancel, { passive: true });
 
-    // Cleanup funkcija (uklanja listener-e kad se pređe na novi slide)
     currentSwipeCleanup = () => {
       slideEl.removeEventListener('touchstart', handleTouchStart);
       slideEl.removeEventListener('touchend', handleTouchEnd);
       slideEl.removeEventListener('touchcancel', handleTouchCancel);
     };
   }
+
 
   function getEduIcon(iconType) {
     const icons = {
@@ -1201,17 +1075,12 @@ const Quiz = (function() {
     return icons[iconType] || icons.goals;
   }
 
-// ============================================
-  // SCREEN: CALCULATING ANIMACIJA (3 sek 0% → 100%)
+
+  // ============================================
+  // SCREEN: CALCULATING ANIMACIJA
   // ============================================
 
   function showCalculating() {
-    // Ukloni edu slide ako postoji u body-ju
-    const eduSlide = document.querySelector('.edu-slide');
-    if (eduSlide) eduSlide.remove();
-    
-    // Reset body class
-    document.body.className = '';
     const messages = [
       'Analiziram tvoje odgovore...',
       'Identifikujem obrazac bola...',
@@ -1223,14 +1092,12 @@ const Quiz = (function() {
       <div class="calculating">
         <div class="calculating__progress-wrapper">
           <svg class="calculating__circle" width="200" height="200" viewBox="0 0 200 200">
-            <!-- Background circle -->
             <circle
               cx="100" cy="100" r="88"
               fill="none"
               stroke="rgba(22, 162, 157, 0.15)"
               stroke-width="10"
             />
-            <!-- Progress circle (rotates) -->
             <circle
               id="calcCircleProgress"
               cx="100" cy="100" r="88"
@@ -1259,15 +1126,14 @@ const Quiz = (function() {
     const circleEl = document.getElementById('calcCircleProgress');
     const messageEl = document.getElementById('calcMessage');
 
-    const DURATION = 3000; // 3 sekunde
-    const CIRCUMFERENCE = 552.92; // 2 * π * 88
+    const DURATION = 3000;
+    const CIRCUMFERENCE = 552.92;
 
     let startTime = null;
     let messageIndex = 0;
     let lastMessageChange = 0;
-    const MESSAGE_INTERVAL = 750; // promena teksta na 750ms
+    const MESSAGE_INTERVAL = 750;
 
-    // Loguj 'step_viewed' za calculating
     API.logEvent(State.getSessionId(), 'step_viewed', {
       step_number: 19,
       step_name: 'calculating',
@@ -1278,38 +1144,32 @@ const Quiz = (function() {
       const elapsed = timestamp - startTime;
       const progress = Math.min(elapsed / DURATION, 1);
 
-      // Update procenat (sa easing da deluje prirodnije)
       const easedProgress = easeOutCubic(progress);
       const percentage = Math.round(easedProgress * 100);
       percentageEl.textContent = `${percentage}%`;
 
-      // Update kružni progress
       const offset = CIRCUMFERENCE * (1 - easedProgress);
       circleEl.style.strokeDashoffset = offset;
 
-      // Update poruke
       if (elapsed - lastMessageChange >= MESSAGE_INTERVAL && messageIndex < messages.length - 1) {
         messageIndex++;
         lastMessageChange = elapsed;
-        // Fade-out → change → fade-in
         messageEl.style.opacity = '0';
         setTimeout(() => {
           messageEl.textContent = messages[messageIndex];
           messageEl.style.opacity = '1';
-        }, 25);
+        }, 150);
       }
 
       if (progress < 1) {
         requestAnimationFrame(animate);
       } else {
-        // Animacija završena → idi na lead formu posle kratke pauze
         setTimeout(() => {
           showLeadForm();
         }, 500);
       }
     }
 
-    // Easing function (cubic ease-out)
     function easeOutCubic(t) {
       return 1 - Math.pow(1 - t, 3);
     }
@@ -1317,8 +1177,9 @@ const Quiz = (function() {
     requestAnimationFrame(animate);
   }
 
-// ============================================
-  // SCREEN: LEAD FORM (ime + email)
+
+  // ============================================
+  // SCREEN: LEAD FORM
   // ============================================
 
   function showLeadForm() {
@@ -1393,7 +1254,6 @@ const Quiz = (function() {
     const emailError = document.getElementById('emailError');
     const submitBtn = document.getElementById('leadSubmitBtn');
 
-    // Email validacija
     function isValidEmail(email) {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
@@ -1472,20 +1332,14 @@ const Quiz = (function() {
     const diagnosis = State.getAnswer('diagnosis');
     const allAnswers = State.getAllAnswers();
 
-    // Mapiranje dijagnoze na URL putanju
     const VSL_PATHS = {
       muscle: '/misicni-bol',
       hernia: '/diskus-hernija',
     };
 
     const path = VSL_PATHS[diagnosis] || VSL_PATHS.muscle;
-
-    // Koristi trenutni origin (radi i na staging-u i na produkciji)
-    // Sa lokomoto.webflow.io → ide na lokomoto.webflow.io/misicni-bol
-    // Sa kviz.lokomoto.rs → ide na kviz.lokomoto.rs/misicni-bol
     const baseUrl = `${window.location.origin}${path}`;
 
-    // Parametri za Pain Profile karticu
     const params = new URLSearchParams({
       pain_desc: allAnswers.pain_description?.text || '',
       duration: allAnswers.pain_duration || '',
@@ -1500,8 +1354,9 @@ const Quiz = (function() {
     window.location.replace(finalUrl);
   }
 
+
   // ============================================
-  // PRIVREMENI PLACEHOLDER (dok ne napravimo sve screen-ove)
+  // PRIVREMENI PLACEHOLDER
   // ============================================
 
   function showPlaceholder(message) {
