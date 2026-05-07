@@ -795,6 +795,33 @@ input:focus-visible {
 
 
 /* ============================================
+   EDU TRANSITION OVERLAY
+   Prazan crveni/teal screen koji se postavi PRE renderovanja
+   pravog slide-a, da se sakrije browser layout glitch
+   ============================================ */
+
+.edu-transition-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 200;
+  opacity: 1;
+  transition: opacity 200ms ease;
+  pointer-events: none;
+}
+
+.edu-transition-overlay.edu-slide--warning {
+  background-color: #c81e1e;
+}
+
+.edu-transition-overlay.edu-slide--positive {
+  background-color: var(--color-primary);
+}
+
+
+/* ============================================
    BODY BACKGROUND za edu slide-ove
    Sprečava flash bele pozadine pri prelasku
    ============================================ */
@@ -807,10 +834,10 @@ body.edu-bg-positive {
   background-color: var(--color-primary);
 }
 
-/* Kad je body u edu mode-u, sakri quiz-container ispod
-   tako da nema vizuelnog flash-a kroz beli prostor */
-body.edu-bg-warning .quiz-container,
-body.edu-bg-positive .quiz-container {
+/* Kad je body u edu mode-u, sakri sve elemente quiz-container-a OSIM edu slide-a.
+   Edu slide ima position: fixed pa je svejedno iznad svega. */
+body.edu-bg-warning .quiz-header,
+body.edu-bg-positive .quiz-header {
   visibility: hidden;
 }
 
