@@ -880,13 +880,27 @@ const Quiz = (function() {
     const existingSlide = document.querySelector('.edu-slide');
 
     if (existingSlide && State.getCurrentScreen() === 'edu_block') {
-      // Tranzicija unutar slideshow-a
+      // Tranzicija unutar slideshow-a (slide 1 → 2 → 3 → 4)
       animateEduSlideContent(slideIndex);
       return;
     }
 
-    // Prvi ulazak u edu (sa Goals screen-a)
-    renderEduSlide(slideIndex);
+    // PRVI ulazak u edu — koristi tranziciju da se sakrije glitch
+    // Korak 1: prikaži prazan crveni overlay
+    const overlay = document.createElement('div');
+    overlay.className = `edu-transition-overlay ${isPositive ? 'edu-slide--positive' : 'edu-slide--warning'}`;
+    document.body.appendChild(overlay);
+
+    // Korak 2: posle 250ms (overlay već prekriva sve), renderuj pravi slide ispod
+    setTimeout(() => {
+      renderEduSlide(slideIndex);
+
+      // Korak 3: posle još 50ms (slide je već renderovan), ukloni overlay
+      setTimeout(() => {
+        overlay.style.opacity = '0';
+        setTimeout(() => overlay.remove(), 200);
+      }, 50);
+    }, 250);
   }
 
 
