@@ -1027,3 +1027,15 @@ body.edu-bg-positive {
 .lead-form__subtitle {
   text-align: center;
 }
+
+/* ============================================
+   EDU SLIDE - smooth entry (sprečava flash pri prvom učitavanju)
+   ============================================ */
+
+.edu-slide {
+  transition: opacity 200ms ease;
+}
+
+.edu-slide--entering {
+  opacity: 0;
+}
