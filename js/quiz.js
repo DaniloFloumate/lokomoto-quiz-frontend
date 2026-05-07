@@ -934,6 +934,17 @@ const Quiz = (function() {
 
     setScreen(html, 'edu_block', 18);
 
+    // Fade-in animacija za sadržaj (smooth ulazak iza overlay-a)
+    const contentEl = document.getElementById('eduContent');
+    if (contentEl) {
+      contentEl.style.opacity = '0';
+      contentEl.style.transform = 'translateY(12px)';
+      setTimeout(() => {
+        contentEl.style.opacity = '1';
+        contentEl.style.transform = 'translateY(0)';
+      }, 100);
+    }
+
     document.getElementById('continueBtn').addEventListener('click', () => {
       if (isLast) {
         showCalculating();
