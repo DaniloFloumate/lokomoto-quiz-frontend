@@ -16,9 +16,7 @@ const Quiz = (function() {
 
   // Privremeni opts kada se zove showScreenByName (npr. za back navigation)
   let pendingScreenOpts = null;
-
-  let currentSwipeCleanup = null;
-  let currentEduSlideIndex = 0;
+  
 
   // Total screens (za progress kalkulaciju) — 22 ukupno
   const TOTAL_SCREENS = 22;
@@ -298,7 +296,7 @@ const Quiz = (function() {
 
         setTimeout(() => {
           handlePainLocationSelect(opt.dataset.location);
-        }, 300);
+        }, 150);
       });
     });
   }
@@ -414,7 +412,7 @@ const Quiz = (function() {
           // 'true'/'false' string iz dataset-a → boolean
           const radiates = opt.dataset.radiates === 'true';
           handlePainRadiatesSelect(radiates);
-        }, 300);
+        }, 150);
       });
     });
   }
@@ -492,7 +490,7 @@ const Quiz = (function() {
             value: opt.dataset.value,
             text: opt.dataset.text,
           });
-        }, 300);
+        }, 150);
       });
     });
   }
@@ -709,7 +707,7 @@ const Quiz = (function() {
             value: opt.dataset.value,
             text: opt.dataset.text,
           });
-        }, 300);
+        }, 150);
       });
     });
   }
@@ -898,9 +896,6 @@ const Quiz = (function() {
     const isLast = slideIndex === eduSlides.length - 1;
     const isPositive = slide.type === 'positive';
 
-    // Update tracking varijablu (koristi se u swipe handler-u)
-    currentEduSlideIndex = slideIndex;
-
     // Set body class odmah (sprečava flash bele pozadine)
     document.body.className = isPositive ? 'edu-bg-positive' : 'edu-bg-warning';
 
@@ -958,7 +953,7 @@ const Quiz = (function() {
     });
 
     // Aktiviraj swipe gestures za mobilne uređaje
-    attachEduSwipeListeners();
+    attachEduSwipeListeners(slideIndex);
   }
 
 
@@ -1022,14 +1017,15 @@ const Quiz = (function() {
   }
 
   // Globalna referenca na trenutnog swipe handler-a (za cleanup)
-  currentSwipeCleanup = null;
+  let currentSwipeCleanup = null;
 
-/**
+  /**
    * Dodaje touch gesture listener-e na edu slide
-   * Čita trenutni slide index iz currentEduSlideIndex (tačan u svakom trenutku)
+   * Swipe levo = sledeći slide
+   * Swipe desno = prethodni slide
    */
-  function attachEduSwipeListeners() {
-    // Cleanup prethodnog handler-a
+  function attachEduSwipeListeners(currentIndex) {
+    // Cleanup prethodnog handler-a (sprečava duplo registrovanje)
     if (currentSwipeCleanup) {
       currentSwipeCleanup();
       currentSwipeCleanup = null;
@@ -1043,9 +1039,9 @@ const Quiz = (function() {
     let touchStartTime = 0;
     let isSwiping = false;
 
-    const SWIPE_THRESHOLD = 60;
-    const MAX_SWIPE_TIME = 500;
-    const VERTICAL_TOLERANCE = 75;
+    const SWIPE_THRESHOLD = 60;        // minimum 60px za swipe
+    const MAX_SWIPE_TIME = 500;        // max 500ms za brz swipe
+    const VERTICAL_TOLERANCE = 75;     // ako je vertikalni pokret veći od 75px → ignoriši (scroll)
 
     function handleTouchStart(e) {
       const touch = e.changedTouches[0];
@@ -1064,26 +1060,31 @@ const Quiz = (function() {
       const deltaY = touch.clientY - touchStartY;
       const elapsed = Date.now() - touchStartTime;
 
+      // Predugo trajao = nije swipe (verovatno korisnik zadržao prst)
       if (elapsed > MAX_SWIPE_TIME) return;
+
+      // Premali horizontalni pomeraj
       if (Math.abs(deltaX) < SWIPE_THRESHOLD) return;
+
+      // Preveliki vertikalni pomeraj = scroll, ne swipe
       if (Math.abs(deltaY) > VERTICAL_TOLERANCE) return;
+
+      // Vertikalni pomeraj veći od horizontalnog = nije swipe
       if (Math.abs(deltaY) > Math.abs(deltaX)) return;
 
-      // Čitaj TRENUTNI slide index iz globalne varijable
-      // (umesto stale closure varijable)
-      const idx = currentEduSlideIndex;
-
+      // Validan swipe
       if (deltaX < 0) {
         // Swipe levo → sledeći slide
-        if (idx < eduSlides.length - 1) {
-          showEduBlock(idx + 1);
+        if (currentIndex < eduSlides.length - 1) {
+          showEduBlock(currentIndex + 1);
         } else {
+          // Poslednji slide → idi na calculating
           showCalculating();
         }
       } else {
         // Swipe desno → prethodni slide
-        if (idx > 0) {
-          showEduBlock(idx - 1);
+        if (currentIndex > 0) {
+          showEduBlock(currentIndex - 1);
         }
       }
     }
@@ -1096,6 +1097,7 @@ const Quiz = (function() {
     slideEl.addEventListener('touchend', handleTouchEnd, { passive: true });
     slideEl.addEventListener('touchcancel', handleTouchCancel, { passive: true });
 
+    // Cleanup funkcija (uklanja listener-e kad se pređe na novi slide)
     currentSwipeCleanup = () => {
       slideEl.removeEventListener('touchstart', handleTouchStart);
       slideEl.removeEventListener('touchend', handleTouchEnd);
