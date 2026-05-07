@@ -895,26 +895,78 @@ const Quiz = (function() {
   ];
 
 
-  function showEduBlock(slideIndex = 0) {
+  function renderEduSlide(slideIndex) {
     const slide = eduSlides[slideIndex];
     const isLast = slideIndex === eduSlides.length - 1;
     const isPositive = slide.type === 'positive';
 
-    // Set body class odmah (sprečava flash bele pozadine)
-    document.body.className = isPositive ? 'edu-bg-positive' : 'edu-bg-warning';
+    const dotsHtml = eduSlides.map((_, idx) => `
+      <span class="edu-dot ${idx === slideIndex ? 'edu-dot--active' : ''} ${idx < slideIndex ? 'edu-dot--passed' : ''}"></span>
+    `).join('');
 
-    // Ako već postoji edu-slide u DOM-u (prelazak između slide-ova),
-    // animiraj sadržaj umesto da rerendaš ceo screen
-    const existingSlide = document.querySelector('.edu-slide');
+    const iconSvg = getEduIcon(slide.icon);
+    const textHtml = slide.text ? `<p class="edu-slide__text">${slide.text}</p>` : '';
 
-    if (existingSlide && State.getCurrentScreen() === 'edu_block') {
-      // Tranzicija unutar slideshow-a (slide 1 → 2 → 3 → 4)
-      animateEduSlideContent(slideIndex);
-      return;
-    }
+    // Pravimo edu slide kao zaseban DOM element (ne kroz innerHTML quiz-screens-a)
+    const slideHtml = `
+      <div class="edu-slide ${isPositive ? 'edu-slide--positive' : 'edu-slide--warning'} edu-slide--entering">
+        <div class="edu-slide__dots">${dotsHtml}</div>
 
-    // Prvi ulazak u edu (sa Goals screen-a) — pravi pun render
-    renderEduSlide(slideIndex);
+        <div class="edu-slide__content" id="eduContent">
+          <div class="edu-slide__icon">${iconSvg}</div>
+          <h2 class="edu-slide__heading">${slide.heading}</h2>
+          ${textHtml}
+        </div>
+
+        <div class="edu-slide__actions">
+          <button class="btn btn--edu" id="continueBtn">${isLast ? 'NASTAVI ›' : 'DALJE ›'}</button>
+        </div>
+      </div>
+    `;
+
+    // KLJUČNA PROMENA: Ubacujemo slide u body (NE u quiz-screens)
+    // Tako Goals screen ostaje vidljiv iza, dok se slide priprema
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = slideHtml;
+    const slideEl = wrapper.firstElementChild;
+    document.body.appendChild(slideEl);
+
+    // Postavi ostala stanja (state, progress bar, back btn)
+    State.setCurrentScreen('edu_block');
+    progressBar.classList.add('hidden');
+    globalBackBtn.classList.add('hidden');
+    currentBackHandler = null;
+
+    // Loguj 'step_viewed' event
+    API.logEvent(State.getSessionId(), 'step_viewed', {
+      step_number: 18,
+      step_name: 'edu_block',
+    });
+
+    // Sačekaj 2 frame-a + force layout, pa skini "entering" klasu (fade-in)
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        void slideEl.offsetHeight;
+        slideEl.classList.remove('edu-slide--entering');
+
+        // Posle fade-in animacije, čistimo screensContainer (Goals screen)
+        setTimeout(() => {
+          screensContainer.innerHTML = '';
+        }, 300);
+      });
+    });
+
+    document.getElementById('continueBtn').addEventListener('click', () => {
+      if (isLast) {
+        // Pre prelaska na calculating, uklonimo edu slide iz body-ja
+        slideEl.remove();
+        showCalculating();
+      } else {
+        showEduBlock(slideIndex + 1);
+      }
+    });
+
+    attachEduSwipeListeners(slideIndex);
   }
 
 
