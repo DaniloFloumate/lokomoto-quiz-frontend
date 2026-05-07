@@ -949,18 +949,18 @@ const Quiz = (function() {
 
     setScreen(html, 'edu_block', 18);
 
-    // Forsiraj layout izračunavanje pre nego što prikažemo slide
-    // Tako naslov već zauzme svoju pravu poziciju pre prvog paint-a
-    const slideEl = document.querySelector('.edu-slide');
-    if (slideEl) {
-      // Triggeruj sync layout (forsira browser da izračuna pozicije)
-      void slideEl.offsetHeight;
-
-      // Sad u sledećem frame-u prikaži (već je layout izračunat)
+    // Sačekaj 2 frame-a + force layout, pa skini "entering" klasu
+    // Tako garantujemo da je browser kompletno renderovao slide pre fade-in-a
+    requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        slideEl.classList.remove('edu-slide--entering');
+        const slideEl = document.querySelector('.edu-slide');
+        if (slideEl) {
+          // Force sync layout (garantuje da je sve izračunato)
+          void slideEl.offsetHeight;
+          slideEl.classList.remove('edu-slide--entering');
+        }
       });
-    }
+    });
 
     document.getElementById('continueBtn').addEventListener('click', () => {
       if (isLast) {
