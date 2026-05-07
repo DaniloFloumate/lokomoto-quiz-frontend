@@ -296,7 +296,7 @@ const Quiz = (function() {
 
         setTimeout(() => {
           handlePainLocationSelect(opt.dataset.location);
-        }, 150);
+        }, 75);
       });
     });
   }
@@ -412,7 +412,7 @@ const Quiz = (function() {
           // 'true'/'false' string iz dataset-a → boolean
           const radiates = opt.dataset.radiates === 'true';
           handlePainRadiatesSelect(radiates);
-        }, 150);
+        }, 75);
       });
     });
   }
@@ -490,7 +490,7 @@ const Quiz = (function() {
             value: opt.dataset.value,
             text: opt.dataset.text,
           });
-        }, 150);
+        }, 75);
       });
     });
   }
@@ -707,7 +707,7 @@ const Quiz = (function() {
             value: opt.dataset.value,
             text: opt.dataset.text,
           });
-        }, 150);
+        }, 75);
       });
     });
   }
@@ -1216,7 +1216,7 @@ const Quiz = (function() {
         setTimeout(() => {
           messageEl.textContent = messages[messageIndex];
           messageEl.style.opacity = '1';
-        }, 150);
+        }, 75);
       }
 
       if (progress < 1) {
