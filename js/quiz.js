@@ -85,6 +85,11 @@ const Quiz = (function() {
   // ============================================
 
   function setScreen(html, screenName, screenNumber = null, opts = {}) {
+    // Cleanup edu slide iz body-ja (ako postoji)
+    const eduSlide = document.querySelector('.edu-slide');
+    if (eduSlide && screenName !== 'edu_block') {
+      eduSlide.remove();
+    }
     // Cleanup swipe listener-a kad pređemo van edu slideshow-a
     if (screenName !== 'edu_block' && currentSwipeCleanup) {
       currentSwipeCleanup();
