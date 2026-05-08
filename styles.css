@@ -1295,3 +1295,27 @@ body.edu-bg-positive .quiz-header {
     left: 32px;
   }
 }
+
+/* ============================================
+   EDU DOTS - klikabilni
+   ============================================ */
+
+.edu-slide__dots .edu-dot {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+}
+
+/* Veće tap area na mobile-u (ali ne menja vizuelnu veličinu) */
+.edu-slide__dots .edu-dot::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+}
+
+.edu-slide__dots .edu-dot:hover {
+  background-color: rgba(255, 255, 255, 0.7);
+}
