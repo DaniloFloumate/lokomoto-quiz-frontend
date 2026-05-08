@@ -420,17 +420,44 @@ const Quiz = (function() {
 
     const conclusion = conclusions[location];
 
+    // Različita ikonica za svaki deo leđa
+    const icons = {
+      neck: `
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="5" r="3"></circle>
+          <path d="M9 8c0 2 1 3 3 3s3-1 3-3"></path>
+          <path d="M10 11v3"></path>
+          <path d="M14 11v3"></path>
+          <path d="M8 14h8"></path>
+          <path d="M8 17h8"></path>
+          <path d="M9 20h6"></path>
+        </svg>
+      `,
+      middle: `
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2v20"></path>
+          <path d="M8 5h8"></path>
+          <path d="M7 9h10"></path>
+          <path d="M7 13h10"></path>
+          <path d="M8 17h8"></path>
+          <path d="M9 21h6"></path>
+        </svg>
+      `,
+      lower: `
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v18"></path>
+          <path d="M8 11h8"></path>
+          <path d="M7 15h10"></path>
+          <path d="M7 19h10"></path>
+          <ellipse cx="12" cy="6" rx="4" ry="3"></ellipse>
+        </svg>
+      `,
+    };
+
     const html = `
       <div class="conclusion">
         <div class="conclusion__icon">
-          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2v20"></path>
-            <path d="M8 5h8"></path>
-            <path d="M7 9h10"></path>
-            <path d="M7 13h10"></path>
-            <path d="M8 17h8"></path>
-            <path d="M9 21h6"></path>
-          </svg>
+          ${icons[location] || icons.middle}
         </div>
         <h2 class="conclusion__title">
           <span class="conclusion__highlight">${conclusion.percentage}%</span> naših klijenata dolazi zbog bola u ${conclusion.bodyPart}.
