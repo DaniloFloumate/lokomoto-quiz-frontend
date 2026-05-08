@@ -207,12 +207,6 @@ const Quiz = (function() {
   function showWelcome() {
     const html = `
       <div class="welcome">
-        <div class="welcome__icon">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 12l2 2 4-4"></path>
-            <circle cx="12" cy="12" r="10"></circle>
-          </svg>
-        </div>
         <h1 class="welcome__title">Otkrij uzrok svog bola za 2 minuta</h1>
         <p class="welcome__subtitle">
           Odgovori na nekoliko pitanja i dobićeš personalizovan plan rešavanja bola — potpuno besplatno.
