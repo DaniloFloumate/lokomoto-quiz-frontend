@@ -420,36 +420,36 @@ const Quiz = (function() {
 
     const conclusion = conclusions[location];
 
-    // Različita ikonica za svaki deo leđa
+    // Body siluet ikonice sa highlight-om na delu koji boli
     const icons = {
       neck: `
-        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="5" r="3"></circle>
-          <path d="M9 8c0 2 1 3 3 3s3-1 3-3"></path>
-          <path d="M10 11v3"></path>
-          <path d="M14 11v3"></path>
-          <path d="M8 14h8"></path>
-          <path d="M8 17h8"></path>
-          <path d="M9 20h6"></path>
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Body silhouette (back view) -->
+          <path d="M32 8c-3.3 0-6 2.7-6 6 0 2 0.8 3.7 2 5-1.5 0.5-2.5 2-2.5 3.5l-3 7c-0.5 1 0 2 1 2.5h17c1-0.5 1.5-1.5 1-2.5l-3-7c0-1.5-1-3-2.5-3.5 1.2-1.3 2-3 2-5 0-3.3-2.7-6-6-6z" fill="currentColor" opacity="0.2"/>
+          <path d="M27 32h10l1 8c0 2 0 5 0 8 0 1 0 2-1 3l-1 5h-8l-1-5c-1-1-1-2-1-3 0-3 0-6 0-8l1-8z" fill="currentColor" opacity="0.2"/>
+          <!-- Pain highlight - VRAT (neck area, around shoulders) -->
+          <circle cx="32" cy="20" r="8" fill="#ef4444" opacity="0.25"/>
+          <circle cx="32" cy="20" r="5" fill="#ef4444" opacity="0.5"/>
         </svg>
       `,
       middle: `
-        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2v20"></path>
-          <path d="M8 5h8"></path>
-          <path d="M7 9h10"></path>
-          <path d="M7 13h10"></path>
-          <path d="M8 17h8"></path>
-          <path d="M9 21h6"></path>
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Body silhouette -->
+          <path d="M32 8c-3.3 0-6 2.7-6 6 0 2 0.8 3.7 2 5-1.5 0.5-2.5 2-2.5 3.5l-3 7c-0.5 1 0 2 1 2.5h17c1-0.5 1.5-1.5 1-2.5l-3-7c0-1.5-1-3-2.5-3.5 1.2-1.3 2-3 2-5 0-3.3-2.7-6-6-6z" fill="currentColor" opacity="0.2"/>
+          <path d="M27 32h10l1 8c0 2 0 5 0 8 0 1 0 2-1 3l-1 5h-8l-1-5c-1-1-1-2-1-3 0-3 0-6 0-8l1-8z" fill="currentColor" opacity="0.2"/>
+          <!-- Pain highlight - SREDNJA LEĐA (mid-back) -->
+          <circle cx="32" cy="36" r="8" fill="#ef4444" opacity="0.25"/>
+          <circle cx="32" cy="36" r="5" fill="#ef4444" opacity="0.5"/>
         </svg>
       `,
       lower: `
-        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 3v18"></path>
-          <path d="M8 11h8"></path>
-          <path d="M7 15h10"></path>
-          <path d="M7 19h10"></path>
-          <ellipse cx="12" cy="6" rx="4" ry="3"></ellipse>
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Body silhouette -->
+          <path d="M32 8c-3.3 0-6 2.7-6 6 0 2 0.8 3.7 2 5-1.5 0.5-2.5 2-2.5 3.5l-3 7c-0.5 1 0 2 1 2.5h17c1-0.5 1.5-1.5 1-2.5l-3-7c0-1.5-1-3-2.5-3.5 1.2-1.3 2-3 2-5 0-3.3-2.7-6-6-6z" fill="currentColor" opacity="0.2"/>
+          <path d="M27 32h10l1 8c0 2 0 5 0 8 0 1 0 2-1 3l-1 5h-8l-1-5c-1-1-1-2-1-3 0-3 0-6 0-8l1-8z" fill="currentColor" opacity="0.2"/>
+          <!-- Pain highlight - DONJA LEĐA (lower back) -->
+          <circle cx="32" cy="46" r="8" fill="#ef4444" opacity="0.25"/>
+          <circle cx="32" cy="46" r="5" fill="#ef4444" opacity="0.5"/>
         </svg>
       `,
     };
