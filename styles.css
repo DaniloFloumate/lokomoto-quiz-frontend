@@ -1101,20 +1101,18 @@ body.edu-bg-positive .quiz-header {
 .welcome__benefits {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   margin-bottom: 32px;
   list-style: none;
   padding: 0;
   width: 100%;
+  align-items: center;
 }
 
 .welcome__benefits li {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background-color: var(--color-card);
-  border-radius: var(--radius-md);
+  gap: 10px;
   font-size: 15px;
   color: var(--color-text);
   text-align: left;
