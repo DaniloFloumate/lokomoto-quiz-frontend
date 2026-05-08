@@ -1085,6 +1085,9 @@ const Quiz = (function() {
       }
     });
 
+    // Klikabilni dot indicators
+    attachEduDotListeners(slideIndex);
+
     attachEduSwipeListeners(slideIndex);
   }
 
@@ -1136,10 +1139,34 @@ const Quiz = (function() {
       contentEl.style.opacity = '1';
       contentEl.style.transform = 'translateY(0)';
 
+      // Re-attach dot listeners za nov slideIndex
+      attachEduDotListeners(slideIndex);
+
       attachEduSwipeListeners(slideIndex);
     }, 200);
   }
 
+  /**
+   * Dodaje klik handlere na dot indicators
+   * Klik na dot vodi na taj slide
+   */
+  function attachEduDotListeners(currentIndex) {
+    const dots = document.querySelectorAll('.edu-slide__dots .edu-dot');
+    
+    dots.forEach((dot, idx) => {
+      // Skloni stare handlere kloniranjem
+      const newDot = dot.cloneNode(true);
+      dot.parentNode.replaceChild(newDot, dot);
+      
+      newDot.style.cursor = 'pointer';
+      
+      newDot.addEventListener('click', () => {
+        if (idx !== currentIndex) {
+          showEduBlock(idx);
+        }
+      });
+    });
+  }
 
   function attachEduSwipeListeners(currentIndex) {
     if (currentSwipeCleanup) {
