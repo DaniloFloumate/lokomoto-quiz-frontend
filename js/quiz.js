@@ -420,64 +420,35 @@ const Quiz = (function() {
 
     const conclusion = conclusions[location];
 
-    // Krupni kadar gornjeg dela tela sa rukama uz telo
+    // Profesionalne medicinske ikonice iz Iconify (Healthicons set)
+    // Svaka pokazuje osobu koja se drži za deo tela koji boli
     const icons = {
       neck: `
-        <svg width="64" height="64" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Glava -->
-          <circle cx="40" cy="14" r="10" fill="currentColor" opacity="0.2"/>
-          <!-- Vrat -->
-          <path d="M35 22 L35 28 L45 28 L45 22" fill="currentColor" opacity="0.2"/>
-          <!-- Ramena (zaobljena) -->
-          <path d="M18 32 Q18 28 22 28 L58 28 Q62 28 62 32 L60 36 L20 36 Z" fill="currentColor" opacity="0.2"/>
-          <!-- Leva ruka (uz telo) -->
-          <path d="M18 32 Q14 36 14 44 L14 60 Q14 64 18 64 Q22 64 22 60 L22 44" fill="currentColor" opacity="0.2"/>
-          <!-- Desna ruka (uz telo) -->
-          <path d="M62 32 Q66 36 66 44 L66 60 Q66 64 62 64 Q58 64 58 60 L58 44" fill="currentColor" opacity="0.2"/>
-          <!-- Torzo -->
-          <path d="M22 36 L58 36 L56 70 Q56 74 52 74 L28 74 Q24 74 24 70 Z" fill="currentColor" opacity="0.2"/>
-          <!-- Pain highlight - VRAT -->
-          <circle cx="40" cy="26" r="5" fill="#ef4444" opacity="0.3"/>
-          <circle cx="40" cy="26" r="2.5" fill="#ef4444" opacity="0.75"/>
-        </svg>
+        <img 
+          src="https://api.iconify.design/healthicons/neck-pain.svg?color=%2316a29d" 
+          width="80" 
+          height="80" 
+          alt="Bol u vratu"
+          style="display: block;"
+        />
       `,
       middle: `
-        <svg width="64" height="64" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Glava -->
-          <circle cx="40" cy="14" r="10" fill="currentColor" opacity="0.2"/>
-          <!-- Vrat -->
-          <path d="M35 22 L35 28 L45 28 L45 22" fill="currentColor" opacity="0.2"/>
-          <!-- Ramena (zaobljena) -->
-          <path d="M18 32 Q18 28 22 28 L58 28 Q62 28 62 32 L60 36 L20 36 Z" fill="currentColor" opacity="0.2"/>
-          <!-- Leva ruka (uz telo) -->
-          <path d="M18 32 Q14 36 14 44 L14 60 Q14 64 18 64 Q22 64 22 60 L22 44" fill="currentColor" opacity="0.2"/>
-          <!-- Desna ruka (uz telo) -->
-          <path d="M62 32 Q66 36 66 44 L66 60 Q66 64 62 64 Q58 64 58 60 L58 44" fill="currentColor" opacity="0.2"/>
-          <!-- Torzo -->
-          <path d="M22 36 L58 36 L56 70 Q56 74 52 74 L28 74 Q24 74 24 70 Z" fill="currentColor" opacity="0.2"/>
-          <!-- Pain highlight - SREDNJA LEĐA -->
-          <circle cx="40" cy="50" r="5" fill="#ef4444" opacity="0.3"/>
-          <circle cx="40" cy="50" r="2.5" fill="#ef4444" opacity="0.75"/>
-        </svg>
+        <img 
+          src="https://api.iconify.design/healthicons/back-pain.svg?color=%2316a29d" 
+          width="80" 
+          height="80" 
+          alt="Bol u sredini leđa"
+          style="display: block;"
+        />
       `,
       lower: `
-        <svg width="64" height="64" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Glava -->
-          <circle cx="40" cy="14" r="10" fill="currentColor" opacity="0.2"/>
-          <!-- Vrat -->
-          <path d="M35 22 L35 28 L45 28 L45 22" fill="currentColor" opacity="0.2"/>
-          <!-- Ramena (zaobljena) -->
-          <path d="M18 32 Q18 28 22 28 L58 28 Q62 28 62 32 L60 36 L20 36 Z" fill="currentColor" opacity="0.2"/>
-          <!-- Leva ruka (uz telo) -->
-          <path d="M18 32 Q14 36 14 44 L14 60 Q14 64 18 64 Q22 64 22 60 L22 44" fill="currentColor" opacity="0.2"/>
-          <!-- Desna ruka (uz telo) -->
-          <path d="M62 32 Q66 36 66 44 L66 60 Q66 64 62 64 Q58 64 58 60 L58 44" fill="currentColor" opacity="0.2"/>
-          <!-- Torzo -->
-          <path d="M22 36 L58 36 L56 70 Q56 74 52 74 L28 74 Q24 74 24 70 Z" fill="currentColor" opacity="0.2"/>
-          <!-- Pain highlight - DONJA LEĐA -->
-          <circle cx="40" cy="66" r="5" fill="#ef4444" opacity="0.3"/>
-          <circle cx="40" cy="66" r="2.5" fill="#ef4444" opacity="0.75"/>
-        </svg>
+        <img 
+          src="https://api.iconify.design/healthicons/lower-back-pain.svg?color=%2316a29d" 
+          width="80" 
+          height="80" 
+          alt="Bol u donjim leđima"
+          style="display: block;"
+        />
       `,
     };
 
