@@ -662,7 +662,7 @@ const Quiz = (function() {
     const initialValue = State.getAnswer('pain_scale') || 5;
 
     const html = `
-      <h2 class="screen__title">Koliko jak je bol?</h2>
+      <h2 class="screen__title">Koliko je jak bol?</h2>
       <p class="screen__subtitle">Oceni intenzitet bola na skali od 1 do 10.</p>
 
       <div class="scale-container">
@@ -1029,8 +1029,19 @@ const Quiz = (function() {
     const iconSvg = getEduIcon(slide.icon);
     const textHtml = slide.text ? `<p class="edu-slide__text">${slide.text}</p>` : '';
 
+    // Back button samo ako nismo na prvom slide-u
+    const backBtnHtml = slideIndex > 0 ? `
+      <button class="edu-slide__back" id="eduBackBtn" aria-label="Nazad">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+      </button>
+    ` : '';
+
     const html = `
       <div class="edu-slide ${isPositive ? 'edu-slide--positive' : 'edu-slide--warning'}">
+        ${backBtnHtml}
         <div class="edu-slide__dots">${dotsHtml}</div>
 
         <div class="edu-slide__content" id="eduContent">
@@ -1056,6 +1067,14 @@ const Quiz = (function() {
         contentEl.style.opacity = '1';
         contentEl.style.transform = 'translateY(0)';
       }, 100);
+    }
+
+    // Back button handler — vrati se na prethodni slide
+    const backBtn = document.getElementById('eduBackBtn');
+    if (backBtn) {
+      backBtn.addEventListener('click', () => {
+        showEduBlock(slideIndex - 1);
+      });
     }
 
     document.getElementById('continueBtn').addEventListener('click', () => {
@@ -1199,8 +1218,11 @@ const Quiz = (function() {
         <circle cx="12" cy="12" r="2"></circle>
       </svg>`,
       spread: `<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-        <polyline points="17 6 23 6 23 12"></polyline>
+        <circle cx="12" cy="12" r="2" fill="currentColor"></circle>
+        <path d="M12 6 C 9 6, 7 8, 7 12 C 7 16, 9 18, 12 18"></path>
+        <path d="M12 6 C 15 6, 17 8, 17 12 C 17 16, 15 18, 12 18"></path>
+        <path d="M12 3 C 7 3, 4 7, 4 12 C 4 17, 7 21, 12 21"></path>
+        <path d="M12 3 C 17 3, 20 7, 20 12 C 20 17, 17 21, 12 21"></path>
       </svg>`,
       mental: `<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"></path>
