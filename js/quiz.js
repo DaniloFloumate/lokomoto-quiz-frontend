@@ -420,45 +420,63 @@ const Quiz = (function() {
 
     const conclusion = conclusions[location];
 
-    // Krupni kadar gornjeg dela tela (od bokova do glave) sa highlight-om bola
+    // Krupni kadar gornjeg dela tela sa rukama uz telo
     const icons = {
       neck: `
-        <svg width="64" height="64" viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="64" height="64" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
           <!-- Glava -->
-          <circle cx="32" cy="14" r="9" fill="currentColor" opacity="0.2"/>
+          <circle cx="40" cy="14" r="10" fill="currentColor" opacity="0.2"/>
           <!-- Vrat -->
-          <rect x="28" y="22" width="8" height="6" fill="currentColor" opacity="0.2"/>
-          <!-- Ramena + torzo (širi gornji deo) -->
-          <path d="M14 32c0-2 2-4 4-4h28c2 0 4 2 4 4l-2 28c0 2-2 4-4 4H20c-2 0-4-2-4-4L14 32z" fill="currentColor" opacity="0.2"/>
+          <path d="M35 22 L35 28 L45 28 L45 22" fill="currentColor" opacity="0.2"/>
+          <!-- Ramena (zaobljena) -->
+          <path d="M18 32 Q18 28 22 28 L58 28 Q62 28 62 32 L60 36 L20 36 Z" fill="currentColor" opacity="0.2"/>
+          <!-- Leva ruka (uz telo) -->
+          <path d="M18 32 Q14 36 14 44 L14 60 Q14 64 18 64 Q22 64 22 60 L22 44" fill="currentColor" opacity="0.2"/>
+          <!-- Desna ruka (uz telo) -->
+          <path d="M62 32 Q66 36 66 44 L66 60 Q66 64 62 64 Q58 64 58 60 L58 44" fill="currentColor" opacity="0.2"/>
+          <!-- Torzo -->
+          <path d="M22 36 L58 36 L56 70 Q56 74 52 74 L28 74 Q24 74 24 70 Z" fill="currentColor" opacity="0.2"/>
           <!-- Pain highlight - VRAT -->
-          <circle cx="32" cy="26" r="5" fill="#ef4444" opacity="0.3"/>
-          <circle cx="32" cy="26" r="2.5" fill="#ef4444" opacity="0.7"/>
+          <circle cx="40" cy="26" r="5" fill="#ef4444" opacity="0.3"/>
+          <circle cx="40" cy="26" r="2.5" fill="#ef4444" opacity="0.75"/>
         </svg>
       `,
       middle: `
-        <svg width="64" height="64" viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="64" height="64" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
           <!-- Glava -->
-          <circle cx="32" cy="14" r="9" fill="currentColor" opacity="0.2"/>
+          <circle cx="40" cy="14" r="10" fill="currentColor" opacity="0.2"/>
           <!-- Vrat -->
-          <rect x="28" y="22" width="8" height="6" fill="currentColor" opacity="0.2"/>
-          <!-- Ramena + torzo -->
-          <path d="M14 32c0-2 2-4 4-4h28c2 0 4 2 4 4l-2 28c0 2-2 4-4 4H20c-2 0-4-2-4-4L14 32z" fill="currentColor" opacity="0.2"/>
+          <path d="M35 22 L35 28 L45 28 L45 22" fill="currentColor" opacity="0.2"/>
+          <!-- Ramena (zaobljena) -->
+          <path d="M18 32 Q18 28 22 28 L58 28 Q62 28 62 32 L60 36 L20 36 Z" fill="currentColor" opacity="0.2"/>
+          <!-- Leva ruka (uz telo) -->
+          <path d="M18 32 Q14 36 14 44 L14 60 Q14 64 18 64 Q22 64 22 60 L22 44" fill="currentColor" opacity="0.2"/>
+          <!-- Desna ruka (uz telo) -->
+          <path d="M62 32 Q66 36 66 44 L66 60 Q66 64 62 64 Q58 64 58 60 L58 44" fill="currentColor" opacity="0.2"/>
+          <!-- Torzo -->
+          <path d="M22 36 L58 36 L56 70 Q56 74 52 74 L28 74 Q24 74 24 70 Z" fill="currentColor" opacity="0.2"/>
           <!-- Pain highlight - SREDNJA LEĐA -->
-          <circle cx="32" cy="44" r="5" fill="#ef4444" opacity="0.3"/>
-          <circle cx="32" cy="44" r="2.5" fill="#ef4444" opacity="0.7"/>
+          <circle cx="40" cy="50" r="5" fill="#ef4444" opacity="0.3"/>
+          <circle cx="40" cy="50" r="2.5" fill="#ef4444" opacity="0.75"/>
         </svg>
       `,
       lower: `
-        <svg width="64" height="64" viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="64" height="64" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
           <!-- Glava -->
-          <circle cx="32" cy="14" r="9" fill="currentColor" opacity="0.2"/>
+          <circle cx="40" cy="14" r="10" fill="currentColor" opacity="0.2"/>
           <!-- Vrat -->
-          <rect x="28" y="22" width="8" height="6" fill="currentColor" opacity="0.2"/>
-          <!-- Ramena + torzo -->
-          <path d="M14 32c0-2 2-4 4-4h28c2 0 4 2 4 4l-2 28c0 2-2 4-4 4H20c-2 0-4-2-4-4L14 32z" fill="currentColor" opacity="0.2"/>
+          <path d="M35 22 L35 28 L45 28 L45 22" fill="currentColor" opacity="0.2"/>
+          <!-- Ramena (zaobljena) -->
+          <path d="M18 32 Q18 28 22 28 L58 28 Q62 28 62 32 L60 36 L20 36 Z" fill="currentColor" opacity="0.2"/>
+          <!-- Leva ruka (uz telo) -->
+          <path d="M18 32 Q14 36 14 44 L14 60 Q14 64 18 64 Q22 64 22 60 L22 44" fill="currentColor" opacity="0.2"/>
+          <!-- Desna ruka (uz telo) -->
+          <path d="M62 32 Q66 36 66 44 L66 60 Q66 64 62 64 Q58 64 58 60 L58 44" fill="currentColor" opacity="0.2"/>
+          <!-- Torzo -->
+          <path d="M22 36 L58 36 L56 70 Q56 74 52 74 L28 74 Q24 74 24 70 Z" fill="currentColor" opacity="0.2"/>
           <!-- Pain highlight - DONJA LEĐA -->
-          <circle cx="32" cy="58" r="5" fill="#ef4444" opacity="0.3"/>
-          <circle cx="32" cy="58" r="2.5" fill="#ef4444" opacity="0.7"/>
+          <circle cx="40" cy="66" r="5" fill="#ef4444" opacity="0.3"/>
+          <circle cx="40" cy="66" r="2.5" fill="#ef4444" opacity="0.75"/>
         </svg>
       `,
     };
