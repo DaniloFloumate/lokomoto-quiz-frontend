@@ -1143,6 +1143,11 @@ body.edu-bg-positive .quiz-header {
   margin-top: 2px;
 }
 
+.welcome__benefit-icon svg {
+  stroke: white;
+  stroke-width: 3.5;
+}
+
 .welcome__benefits li > div {
   display: flex;
   flex-direction: column;
