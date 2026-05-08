@@ -420,36 +420,45 @@ const Quiz = (function() {
 
     const conclusion = conclusions[location];
 
-    // Body siluet ikonice sa highlight-om na delu koji boli
+    // Krupni kadar gornjeg dela tela (od bokova do glave) sa highlight-om bola
     const icons = {
       neck: `
-        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Body silhouette (back view) -->
-          <path d="M32 8c-3.3 0-6 2.7-6 6 0 2 0.8 3.7 2 5-1.5 0.5-2.5 2-2.5 3.5l-3 7c-0.5 1 0 2 1 2.5h17c1-0.5 1.5-1.5 1-2.5l-3-7c0-1.5-1-3-2.5-3.5 1.2-1.3 2-3 2-5 0-3.3-2.7-6-6-6z" fill="currentColor" opacity="0.2"/>
-          <path d="M27 32h10l1 8c0 2 0 5 0 8 0 1 0 2-1 3l-1 5h-8l-1-5c-1-1-1-2-1-3 0-3 0-6 0-8l1-8z" fill="currentColor" opacity="0.2"/>
-          <!-- Pain highlight - VRAT (neck area, around shoulders) -->
-          <circle cx="32" cy="20" r="8" fill="#ef4444" opacity="0.25"/>
-          <circle cx="32" cy="20" r="5" fill="#ef4444" opacity="0.5"/>
+        <svg width="64" height="64" viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Glava -->
+          <circle cx="32" cy="14" r="9" fill="currentColor" opacity="0.2"/>
+          <!-- Vrat -->
+          <rect x="28" y="22" width="8" height="6" fill="currentColor" opacity="0.2"/>
+          <!-- Ramena + torzo (širi gornji deo) -->
+          <path d="M14 32c0-2 2-4 4-4h28c2 0 4 2 4 4l-2 28c0 2-2 4-4 4H20c-2 0-4-2-4-4L14 32z" fill="currentColor" opacity="0.2"/>
+          <!-- Pain highlight - VRAT -->
+          <circle cx="32" cy="26" r="5" fill="#ef4444" opacity="0.3"/>
+          <circle cx="32" cy="26" r="2.5" fill="#ef4444" opacity="0.7"/>
         </svg>
       `,
       middle: `
-        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Body silhouette -->
-          <path d="M32 8c-3.3 0-6 2.7-6 6 0 2 0.8 3.7 2 5-1.5 0.5-2.5 2-2.5 3.5l-3 7c-0.5 1 0 2 1 2.5h17c1-0.5 1.5-1.5 1-2.5l-3-7c0-1.5-1-3-2.5-3.5 1.2-1.3 2-3 2-5 0-3.3-2.7-6-6-6z" fill="currentColor" opacity="0.2"/>
-          <path d="M27 32h10l1 8c0 2 0 5 0 8 0 1 0 2-1 3l-1 5h-8l-1-5c-1-1-1-2-1-3 0-3 0-6 0-8l1-8z" fill="currentColor" opacity="0.2"/>
-          <!-- Pain highlight - SREDNJA LEĐA (mid-back) -->
-          <circle cx="32" cy="36" r="8" fill="#ef4444" opacity="0.25"/>
-          <circle cx="32" cy="36" r="5" fill="#ef4444" opacity="0.5"/>
+        <svg width="64" height="64" viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Glava -->
+          <circle cx="32" cy="14" r="9" fill="currentColor" opacity="0.2"/>
+          <!-- Vrat -->
+          <rect x="28" y="22" width="8" height="6" fill="currentColor" opacity="0.2"/>
+          <!-- Ramena + torzo -->
+          <path d="M14 32c0-2 2-4 4-4h28c2 0 4 2 4 4l-2 28c0 2-2 4-4 4H20c-2 0-4-2-4-4L14 32z" fill="currentColor" opacity="0.2"/>
+          <!-- Pain highlight - SREDNJA LEĐA -->
+          <circle cx="32" cy="44" r="5" fill="#ef4444" opacity="0.3"/>
+          <circle cx="32" cy="44" r="2.5" fill="#ef4444" opacity="0.7"/>
         </svg>
       `,
       lower: `
-        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Body silhouette -->
-          <path d="M32 8c-3.3 0-6 2.7-6 6 0 2 0.8 3.7 2 5-1.5 0.5-2.5 2-2.5 3.5l-3 7c-0.5 1 0 2 1 2.5h17c1-0.5 1.5-1.5 1-2.5l-3-7c0-1.5-1-3-2.5-3.5 1.2-1.3 2-3 2-5 0-3.3-2.7-6-6-6z" fill="currentColor" opacity="0.2"/>
-          <path d="M27 32h10l1 8c0 2 0 5 0 8 0 1 0 2-1 3l-1 5h-8l-1-5c-1-1-1-2-1-3 0-3 0-6 0-8l1-8z" fill="currentColor" opacity="0.2"/>
-          <!-- Pain highlight - DONJA LEĐA (lower back) -->
-          <circle cx="32" cy="46" r="8" fill="#ef4444" opacity="0.25"/>
-          <circle cx="32" cy="46" r="5" fill="#ef4444" opacity="0.5"/>
+        <svg width="64" height="64" viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Glava -->
+          <circle cx="32" cy="14" r="9" fill="currentColor" opacity="0.2"/>
+          <!-- Vrat -->
+          <rect x="28" y="22" width="8" height="6" fill="currentColor" opacity="0.2"/>
+          <!-- Ramena + torzo -->
+          <path d="M14 32c0-2 2-4 4-4h28c2 0 4 2 4 4l-2 28c0 2-2 4-4 4H20c-2 0-4-2-4-4L14 32z" fill="currentColor" opacity="0.2"/>
+          <!-- Pain highlight - DONJA LEĐA -->
+          <circle cx="32" cy="58" r="5" fill="#ef4444" opacity="0.3"/>
+          <circle cx="32" cy="58" r="2.5" fill="#ef4444" opacity="0.7"/>
         </svg>
       `,
     };
