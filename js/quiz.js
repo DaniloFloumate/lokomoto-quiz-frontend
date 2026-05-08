@@ -1146,6 +1146,21 @@ const Quiz = (function() {
         }
       });
 
+      // Re-bind back button handler sa novim slideIndex
+      const backBtn = document.getElementById('eduBackBtn');
+      if (backBtn) {
+        const newBackBtn = backBtn.cloneNode(true);
+        backBtn.parentNode.replaceChild(newBackBtn, backBtn);
+        newBackBtn.addEventListener('click', () => {
+          if (slideIndex === 0) {
+            document.body.className = '';
+            showGoals();
+          } else {
+            showEduBlock(slideIndex - 1);
+          }
+        });
+      }
+
       contentEl.style.opacity = '1';
       contentEl.style.transform = 'translateY(0)';
 
