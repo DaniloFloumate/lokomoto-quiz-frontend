@@ -207,29 +207,49 @@ const Quiz = (function() {
   function showWelcome() {
     const html = `
       <div class="welcome">
+        <span class="welcome__eyebrow">PERSONALIZOVAN KVIZ</span>
+
         <h1 class="welcome__title">Otkrij uzrok svog bola za 2 minuta</h1>
+
         <p class="welcome__subtitle">
           Odgovori na nekoliko pitanja i dobićeš personalizovan plan rešavanja bola — potpuno besplatno.
         </p>
 
+        <div class="welcome__divider"></div>
+
         <ul class="welcome__benefits">
           <li>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-            <span>Personalizovan plan</span>
+            <span class="welcome__benefit-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+            <div>
+              <strong>Personalizovan plan</strong>
+              <span>Tačno za tvoj tip bola</span>
+            </div>
           </li>
           <li>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-            <span>Bez registracije</span>
+            <span class="welcome__benefit-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+            <div>
+              <strong>Bez registracije</strong>
+              <span>Samo email na kraju</span>
+            </div>
           </li>
           <li>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-            <span>100% besplatno</span>
+            <span class="welcome__benefit-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+            <div>
+              <strong>100% besplatno</strong>
+              <span>Bez skrivenih troškova</span>
+            </div>
           </li>
         </ul>
 
@@ -237,7 +257,14 @@ const Quiz = (function() {
           <button class="btn btn--primary btn--large" id="startBtn">ZAPOČNI KVIZ ›</button>
         </div>
 
-        <p class="welcome__trust">3,500+ ljudi je već uradilo ovaj kviz</p>
+        <div class="welcome__trust">
+          <div class="welcome__trust-avatars">
+            <div class="welcome__trust-avatar"></div>
+            <div class="welcome__trust-avatar"></div>
+            <div class="welcome__trust-avatar"></div>
+          </div>
+          <span>3,500+ ljudi je već uradilo ovaj kviz</span>
+        </div>
       </div>
     `;
 
