@@ -1029,15 +1029,15 @@ const Quiz = (function() {
     const iconSvg = getEduIcon(slide.icon);
     const textHtml = slide.text ? `<p class="edu-slide__text">${slide.text}</p>` : '';
 
-    // Back button samo ako nismo na prvom slide-u
-    const backBtnHtml = slideIndex > 0 ? `
+    // Back button na svim slide-ovima
+    const backBtnHtml = `
       <button class="edu-slide__back" id="eduBackBtn" aria-label="Nazad">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="19" y1="12" x2="5" y2="12"></line>
           <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
       </button>
-    ` : '';
+    `;
 
     const html = `
       <div class="edu-slide ${isPositive ? 'edu-slide--positive' : 'edu-slide--warning'}">
@@ -1069,11 +1069,19 @@ const Quiz = (function() {
       }, 100);
     }
 
-    // Back button handler — vrati se na prethodni slide
+    // Back button handler
+    // Na prvom slide-u → vrati na Goals screen
+    // Na ostalima → vrati na prethodni edu slide
     const backBtn = document.getElementById('eduBackBtn');
     if (backBtn) {
       backBtn.addEventListener('click', () => {
-        showEduBlock(slideIndex - 1);
+        if (slideIndex === 0) {
+          // Reset body class i edu state pre povratka na Goals
+          document.body.className = '';
+          showGoals();
+        } else {
+          showEduBlock(slideIndex - 1);
+        }
       });
     }
 
