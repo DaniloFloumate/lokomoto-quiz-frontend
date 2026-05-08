@@ -436,12 +436,17 @@ input:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   margin-bottom: 24px;
-  background-color: rgba(22, 162, 157, 0.1);
+  background-color: rgba(22, 162, 157, 0.08);
   color: var(--color-primary);
   border-radius: 50%;
+}
+
+.conclusion__icon svg {
+  width: 70px;
+  height: 70px;
 }
 
 .conclusion__icon--alert {
