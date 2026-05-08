@@ -77,8 +77,8 @@ const Quiz = (function() {
     State.setSessionId(result.data.session_id);
     console.log('[quiz] Sesija kreirana:', result.data.session_id);
 
-    // Idi na prvi screen — Gender selection
-    showGender();
+    // Idi na prvi screen — Welcome
+    showWelcome();
   }
 
 
@@ -200,6 +200,61 @@ const Quiz = (function() {
     pendingScreenOpts = null;
   }
 
+  // ============================================
+  // SCREEN: WELCOME (Započni kviz)
+  // ============================================
+
+  function showWelcome() {
+    const html = `
+      <div class="welcome">
+        <div class="welcome__icon">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 12l2 2 4-4"></path>
+            <circle cx="12" cy="12" r="10"></circle>
+          </svg>
+        </div>
+        <h1 class="welcome__title">Otkrij uzrok svog bola za 2 minuta</h1>
+        <p class="welcome__subtitle">
+          Odgovori na nekoliko pitanja i dobićeš personalizovan plan rešavanja bola — potpuno besplatno.
+        </p>
+
+        <ul class="welcome__benefits">
+          <li>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Personalizovan plan</span>
+          </li>
+          <li>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Bez registracije</span>
+          </li>
+          <li>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>100% besplatno</span>
+          </li>
+        </ul>
+
+        <div class="actions">
+          <button class="btn btn--primary btn--large" id="startBtn">ZAPOČNI KVIZ ›</button>
+        </div>
+
+        <p class="welcome__trust">3,500+ ljudi je već uradilo ovaj kviz</p>
+      </div>
+    `;
+
+    setScreen(html, 'welcome', null, { hideBack: true });
+
+    document.getElementById('startBtn').addEventListener('click', () => {
+      setTimeout(() => {
+        showGender();
+      }, 50);
+    });
+  }
 
   // ============================================
   // SCREEN: GENDER SELECTION
@@ -212,12 +267,24 @@ const Quiz = (function() {
 
       <div class="gender-grid">
         <button class="gender-card" data-gender="female">
+          <div class="gender-card__icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8" r="5"></circle>
+              <path d="M12 13v8"></path>
+              <path d="M9 18h6"></path>
+            </svg>
+          </div>
           <div class="gender-card__label">Žensko</div>
-          <div class="gender-card__arrow">→</div>
         </button>
         <button class="gender-card" data-gender="male">
+          <div class="gender-card__icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="10" cy="14" r="5"></circle>
+              <path d="M19 5l-5.5 5.5"></path>
+              <path d="M14 5h5v5"></path>
+            </svg>
+          </div>
           <div class="gender-card__label">Muško</div>
-          <div class="gender-card__arrow">→</div>
         </button>
       </div>
     `;
