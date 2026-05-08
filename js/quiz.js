@@ -1041,8 +1041,10 @@ const Quiz = (function() {
 
     const html = `
       <div class="edu-slide ${isPositive ? 'edu-slide--positive' : 'edu-slide--warning'}">
-        ${backBtnHtml}
-        <div class="edu-slide__dots">${dotsHtml}</div>
+        <div class="edu-slide__top-bar">
+          ${backBtnHtml}
+          <div class="edu-slide__dots">${dotsHtml}</div>
+        </div>
 
         <div class="edu-slide__content" id="eduContent">
           <div class="edu-slide__icon">${iconSvg}</div>
