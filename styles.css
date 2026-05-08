@@ -705,9 +705,25 @@ input:focus-visible {
 
 .edu-slide__dots {
   display: flex;
+  align-items: center;
   justify-content: center;
   gap: 8px;
   margin-bottom: 48px;
+  position: relative;
+}
+
+/* Wrapper za back button + dots na vrhu edu slide-a */
+.edu-slide__top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 48px;
+  position: relative;
+}
+
+.edu-slide__top-bar .edu-slide__dots {
+  margin-bottom: 0;
 }
 
 .edu-dot {
@@ -1266,12 +1282,8 @@ body.edu-bg-positive .quiz-header {
    ============================================ */
 
 .edu-slide__back {
-  position: absolute;
-  top: 24px;
-  left: 24px;
-  z-index: 10;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1281,6 +1293,8 @@ body.edu-bg-positive .quiz-header {
   cursor: pointer;
   transition: all var(--transition-fast);
   -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+  border: none;
 }
 
 .edu-slide__back:hover,
@@ -1289,11 +1303,9 @@ body.edu-bg-positive .quiz-header {
   transform: translateX(-2px);
 }
 
-@media (min-width: 768px) {
-  .edu-slide__back {
-    top: 32px;
-    left: 32px;
-  }
+.edu-slide__back svg {
+  width: 16px;
+  height: 16px;
 }
 
 /* ============================================
