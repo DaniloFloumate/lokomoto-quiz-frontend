@@ -1260,3 +1260,38 @@ body.edu-bg-positive .quiz-header {
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================
+   EDU SLIDE BACK BUTTON
+   ============================================ */
+
+.edu-slide__back {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.edu-slide__back:hover,
+.edu-slide__back:active {
+  background-color: rgba(255, 255, 255, 0.25);
+  transform: translateX(-2px);
+}
+
+@media (min-width: 768px) {
+  .edu-slide__back {
+    top: 32px;
+    left: 32px;
+  }
+}
