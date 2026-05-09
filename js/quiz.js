@@ -1287,11 +1287,14 @@ const Quiz = (function() {
           <circle cx="36" cy="44" r="14"/>
           <circle cx="36" cy="44" r="6"/>
         </g>
-        <g stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none">
-          <line x1="36" y1="44" x2="68" y2="12"/>
-          <polyline points="60 12 68 12 68 20"/>
-          <line x1="28" y1="52" x2="32" y2="48"/>
-          <line x1="32" y1="56" x2="36" y2="52"/>
+        <g stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+          <line x1="68" y1="12" x2="36" y2="44"/>
+          <polyline points="32 40 36 44 40 40"/>
+          <polyline points="32 48 36 44 32 40"/>
+          <line x1="64" y1="8" x2="68" y2="12"/>
+          <line x1="68" y1="12" x2="72" y2="16"/>
+          <line x1="68" y1="12" x2="72" y2="8"/>
+          <line x1="68" y1="12" x2="64" y2="16"/>
         </g>
       </svg>`,
       spread: `<svg width="120" height="120" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
