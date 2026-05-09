@@ -420,35 +420,52 @@ const Quiz = (function() {
 
     const conclusion = conclusions[location];
 
-    // Profesionalne medicinske ikonice iz Iconify (Healthicons set)
-    // Svaka pokazuje osobu koja se drži za deo tela koji boli
+    // Kičma sa highlight-om na različitom mestu za svaku lokaciju bola
     const icons = {
       neck: `
-        <img 
-          src="https://api.iconify.design/healthicons/neck-pain.svg?color=%2316a29d" 
-          width="80" 
-          height="80" 
-          alt="Bol u vratu"
-          style="display: block;"
-        />
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M40 10 v60"/>
+            <path d="M28 18 h24"/>
+            <path d="M25 30 h30"/>
+            <path d="M25 42 h30"/>
+            <path d="M25 54 h30"/>
+            <path d="M28 64 h24"/>
+            <path d="M31 72 h18"/>
+          </g>
+          <circle cx="40" cy="22" r="13" fill="#ef4444" opacity="0.25"/>
+          <circle cx="40" cy="22" r="7" fill="#ef4444" opacity="0.6"/>
+        </svg>
       `,
       middle: `
-        <img 
-          src="https://api.iconify.design/healthicons/back-pain.svg?color=%2316a29d" 
-          width="80" 
-          height="80" 
-          alt="Bol u sredini leđa"
-          style="display: block;"
-        />
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M40 10 v60"/>
+            <path d="M28 18 h24"/>
+            <path d="M25 30 h30"/>
+            <path d="M25 42 h30"/>
+            <path d="M25 54 h30"/>
+            <path d="M28 64 h24"/>
+            <path d="M31 72 h18"/>
+          </g>
+          <circle cx="40" cy="42" r="13" fill="#ef4444" opacity="0.25"/>
+          <circle cx="40" cy="42" r="7" fill="#ef4444" opacity="0.6"/>
+        </svg>
       `,
       lower: `
-        <img 
-          src="https://api.iconify.design/healthicons/lower-back-pain.svg?color=%2316a29d" 
-          width="80" 
-          height="80" 
-          alt="Bol u donjim leđima"
-          style="display: block;"
-        />
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M40 10 v60"/>
+            <path d="M28 18 h24"/>
+            <path d="M25 30 h30"/>
+            <path d="M25 42 h30"/>
+            <path d="M25 54 h30"/>
+            <path d="M28 64 h24"/>
+            <path d="M31 72 h18"/>
+          </g>
+          <circle cx="40" cy="62" r="13" fill="#ef4444" opacity="0.25"/>
+          <circle cx="40" cy="62" r="7" fill="#ef4444" opacity="0.6"/>
+        </svg>
       `,
     };
 
@@ -1269,13 +1286,15 @@ const Quiz = (function() {
         <circle cx="12" cy="12" r="6"></circle>
         <circle cx="12" cy="12" r="2"></circle>
       </svg>`,
-      spread: `<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="2" fill="currentColor"></circle>
-        <path d="M12 6 C 9 6, 7 8, 7 12 C 7 16, 9 18, 12 18"></path>
-        <path d="M12 6 C 15 6, 17 8, 17 12 C 17 16, 15 18, 12 18"></path>
-        <path d="M12 3 C 7 3, 4 7, 4 12 C 4 17, 7 21, 12 21"></path>
-        <path d="M12 3 C 17 3, 20 7, 20 12 C 20 17, 17 21, 12 21"></path>
-      </svg>`,
+      spread: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g class="spread-pulse">
+          <circle cx="40" cy="40" r="34" fill="none" stroke="currentColor" stroke-width="2" opacity="0.2"/>
+          <circle cx="40" cy="40" r="26" fill="none" stroke="currentColor" stroke-width="2" opacity="0.4"/>
+          <circle cx="40" cy="40" r="18" fill="none" stroke="currentColor" stroke-width="2" opacity="0.65"/>
+          <circle cx="40" cy="40" r="10" fill="none" stroke="currentColor" stroke-width="2.5" opacity="0.9"/>
+          <circle cx="40" cy="40" r="5" fill="currentColor"/>
+        </g>
+      </svg>`,,
       mental: `<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"></path>
         <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"></path>
