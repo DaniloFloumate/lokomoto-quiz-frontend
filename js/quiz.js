@@ -1281,10 +1281,12 @@ const Quiz = (function() {
 
   function getEduIcon(iconType) {
     const icons = {
-      goals: `<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"></circle>
-        <circle cx="12" cy="12" r="6"></circle>
-        <circle cx="12" cy="12" r="2"></circle>
+      goals: `<svg width="120" height="120" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+          <path d="M8 64 L28 32 L40 48 L52 24 L72 64 Z"/>
+          <path d="M52 24 L52 10"/>
+        </g>
+        <path d="M52 10 L66 14 L52 20 Z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
       </svg>`,
       spread: `<svg width="120" height="120" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g class="spread-pulse">
