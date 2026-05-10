@@ -11,22 +11,12 @@ const Quiz = (function() {
   let progressBarFill = null;
   let globalBackBtn = null;
 
-  // Trenutna back funkcija (svaki screen je postavlja)
   let currentBackHandler = null;
-
-  // Privremeni opts kada se zove showScreenByName (npr. za back navigation)
   let pendingScreenOpts = null;
-
-  // Globalna referenca na trenutnog swipe handler-a (za cleanup)
   let currentSwipeCleanup = null;
 
-  // Total screens (za progress kalkulaciju) — 22 ukupno (welcome + 21 step)
   const TOTAL_SCREENS = 22;
 
-
-  // ============================================
-  // INICIJALIZACIJA
-  // ============================================
 
   async function init() {
     screensContainer = document.getElementById('quizScreens');
@@ -39,24 +29,17 @@ const Quiz = (function() {
       return;
     }
 
-    // Globalni back dugme handler
     globalBackBtn.addEventListener('click', () => {
       if (currentBackHandler) {
         currentBackHandler();
       }
     });
 
-    // Odmah kreiraj sesiju i prikaži prvi screen
     await startSession();
   }
 
 
-  // ============================================
-  // START - Kreira sesiju i pokazuje prvi screen
-  // ============================================
-
   async function startSession() {
-    // Privremeno prikaži loading
     screensContainer.innerHTML = '<div class="loading">Učitavanje...</div>';
 
     const utmParams = State.getUtmParams();
@@ -77,28 +60,20 @@ const Quiz = (function() {
     State.setSessionId(result.data.session_id);
     console.log('[quiz] Sesija kreirana:', result.data.session_id);
 
-    // Idi na prvi screen — Welcome
     showWelcome();
   }
 
 
-  // ============================================
-  // SCREEN RENDERING (univerzalna funkcija)
-  // ============================================
-
   function setScreen(html, screenName, screenNumber = null, opts = {}) {
-    // Cleanup swipe listener-a kad pređemo van edu slideshow-a
     if (screenName !== 'edu_block' && currentSwipeCleanup) {
       currentSwipeCleanup();
       currentSwipeCleanup = null;
     }
 
-    // Reset body class (skida edu pozadinu kad pređemo dalje)
     if (screenName !== 'edu_block') {
       document.body.className = '';
     }
 
-    // Merge sa pendingScreenOpts (postavlja showScreenByName kad ide back)
     if (pendingScreenOpts) {
       opts = { ...opts, ...pendingScreenOpts };
     }
@@ -111,7 +86,6 @@ const Quiz = (function() {
       </div>
     `;
 
-    // Sakrij progress + back na edu slide-ovima (imaju svoje dot indicators)
     const isFullscreenScreen = screenName === 'edu_block';
 
     if (isFullscreenScreen) {
@@ -124,7 +98,6 @@ const Quiz = (function() {
       progressBar.classList.add('hidden');
     }
 
-    // Back dugme: sakriveno ako je prvi screen ili eksplicitno hideBack: true
     const isFirstScreen = State.getPreviousScreen() === null;
     const shouldHideBack = opts.hideBack || isFirstScreen || isFullscreenScreen;
 
@@ -138,7 +111,6 @@ const Quiz = (function() {
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // Loguj 'step_viewed' event
     if (screenNumber !== null) {
       API.logEvent(State.getSessionId(), 'step_viewed', {
         step_number: screenNumber,
@@ -148,9 +120,6 @@ const Quiz = (function() {
   }
 
 
-  /**
-   * Default back handler - vraća na prethodni screen iz history-ja
-   */
   function goBack() {
     const targetScreen = State.popScreenHistory();
 
@@ -163,9 +132,6 @@ const Quiz = (function() {
   }
 
 
-  /**
-   * Pomoćna funkcija - poziva show* funkciju po imenu screen-a
-   */
   function showScreenByName(screenName, opts = {}) {
     pendingScreenOpts = opts;
 
@@ -272,7 +238,6 @@ const Quiz = (function() {
     setScreen(html, 'welcome', 1, { hideBack: true });
 
     document.getElementById('startBtn').addEventListener('click', async () => {
-      // Loguj completion event-a za welcome
       const timeOnStep = State.getTimeOnCurrentScreen();
       const sessionId = State.getSessionId();
 
@@ -289,7 +254,7 @@ const Quiz = (function() {
   }
 
   // ============================================
-  // SCREEN: GENDER SELECTION — STEP 2
+  // SCREEN: GENDER — STEP 2
   // ============================================
 
   function showGender() {
@@ -896,6 +861,7 @@ const Quiz = (function() {
 
   // ============================================
   // SCREEN: GOALS — STEP 18
+  // VALIDACIJA: bar 1 cilj mora biti izabran
   // ============================================
 
   function showGoals() {
@@ -924,31 +890,63 @@ const Quiz = (function() {
       <h2 class="screen__title">Izaberi svoje ciljeve</h2>
       <p class="screen__subtitle">Možeš da izabereš jedan ili više ciljeva koji su ti najvažniji.</p>
 
-      <div class="options-list">
+      <div class="options-list" id="goalsList">
         ${optionsHtml}
       </div>
 
+      <div class="form-error" id="goalsError" style="display: none;">
+        Izaberi bar jedan cilj da bi nastavio dalje.
+      </div>
+
       <div class="actions">
-        <button class="btn btn--primary" id="continueBtn" ${currentlySelected.length === 0 ? 'disabled' : ''}>NASTAVI ›</button>
+        <button class="btn btn--primary" id="continueBtn">NASTAVI ›</button>
       </div>
     `;
 
     setScreen(html, 'goals', 18);
 
     const continueBtn = document.getElementById('continueBtn');
+    const errorEl = document.getElementById('goalsError');
+    const goalsListEl = document.getElementById('goalsList');
+
+    let hasAttemptedSubmit = false;
+
+    function clearError() {
+      errorEl.style.display = 'none';
+      goalsListEl.classList.remove('options-list--error');
+    }
+
+    function showError() {
+      errorEl.style.display = 'block';
+      goalsListEl.classList.add('options-list--error');
+    }
 
     document.querySelectorAll('.option').forEach(opt => {
       opt.addEventListener('click', () => {
         opt.classList.toggle('selected');
 
-        const anySelected = document.querySelectorAll('.option.selected').length > 0;
-        continueBtn.disabled = !anySelected;
+        // Ako je korisnik već probao da klikne NASTAVI, real-time clear error kad selektuje opciju
+        if (hasAttemptedSubmit) {
+          const anySelected = document.querySelectorAll('.option.selected').length > 0;
+          if (anySelected) {
+            clearError();
+          } else {
+            showError();
+          }
+        }
       });
     });
 
     continueBtn.addEventListener('click', () => {
       const selectedGoals = Array.from(document.querySelectorAll('.option.selected'))
         .map(el => el.dataset.goal);
+
+      if (selectedGoals.length === 0) {
+        hasAttemptedSubmit = true;
+        showError();
+        return;
+      }
+
       handleGoalsSelect(selectedGoals);
     });
   }
@@ -1179,6 +1177,7 @@ const Quiz = (function() {
     }, 200);
   }
 
+
   function attachEduDotListeners(currentIndex) {
     const dots = document.querySelectorAll('.edu-slide__dots .edu-dot');
 
@@ -1195,6 +1194,7 @@ const Quiz = (function() {
       });
     });
   }
+
 
   function attachEduSwipeListeners(currentIndex) {
     if (currentSwipeCleanup) {
@@ -1295,7 +1295,7 @@ const Quiz = (function() {
 
 
   // ============================================
-  // SCREEN: CALCULATING ANIMACIJA — STEP 20
+  // SCREEN: CALCULATING — STEP 20
   // ============================================
 
   function showCalculating() {
@@ -1393,7 +1393,64 @@ const Quiz = (function() {
 
   // ============================================
   // SCREEN: LEAD FORM — STEP 21
+  // VALIDACIJA: ime min 2 char, email mora biti validan
   // ============================================
+
+  // Email validacija — standardna sa sanity check-ovima
+  function isValidEmail(email) {
+    if (!email || typeof email !== 'string') return false;
+    
+    // Bez razmaka
+    if (/\s/.test(email)) return false;
+    
+    // Tačno jedan @
+    const atCount = (email.match(/@/g) || []).length;
+    if (atCount !== 1) return false;
+    
+    // Split na local i domain part
+    const [local, domain] = email.split('@');
+    
+    // Local part: bar 1 karakter
+    if (!local || local.length === 0) return false;
+    
+    // Local part ne može počinjati ili završavati tačkom
+    if (local.startsWith('.') || local.endsWith('.')) return false;
+    
+    // Local part bez duplih tačaka
+    if (local.includes('..')) return false;
+    
+    // Domain part: bar 1 tačka
+    if (!domain || !domain.includes('.')) return false;
+    
+    // Domain ne može počinjati ili završavati tačkom
+    if (domain.startsWith('.') || domain.endsWith('.')) return false;
+    
+    // Domain bez duplih tačaka
+    if (domain.includes('..')) return false;
+    
+    // Split domain po tačkama
+    const domainParts = domain.split('.');
+    
+    // Bar 2 dela u domenu (npr. gmail + com)
+    if (domainParts.length < 2) return false;
+    
+    // Svaki deo mora imati bar 1 karakter
+    if (domainParts.some(p => p.length === 0)) return false;
+    
+    // TLD (poslednji deo) bar 2 karaktera
+    const tld = domainParts[domainParts.length - 1];
+    if (tld.length < 2) return false;
+    
+    // Validni karakteri (slova, brojevi, plus, minus, underscore, tačka u local; slova, brojevi, minus, tačka u domenu)
+    const localPattern = /^[a-zA-Z0-9._+-]+$/;
+    const domainPattern = /^[a-zA-Z0-9.-]+$/;
+    
+    if (!localPattern.test(local)) return false;
+    if (!domainPattern.test(domain)) return false;
+    
+    return true;
+  }
+
 
   function showLeadForm() {
     const html = `
@@ -1413,7 +1470,7 @@ const Quiz = (function() {
 
         <form class="lead-form" id="leadForm" novalidate>
           <div class="form-field">
-            <label for="leadName">Ime</label>
+            <label for="leadName">Ime <span class="required">*</span></label>
             <input
               type="text"
               id="leadName"
@@ -1421,6 +1478,7 @@ const Quiz = (function() {
               placeholder="Tvoje ime"
               autocomplete="given-name"
             />
+            <span class="form-field__error" id="nameError"></span>
           </div>
 
           <div class="form-field">
@@ -1464,64 +1522,107 @@ const Quiz = (function() {
     const form = document.getElementById('leadForm');
     const nameInput = document.getElementById('leadName');
     const emailInput = document.getElementById('leadEmail');
+    const nameError = document.getElementById('nameError');
     const emailError = document.getElementById('emailError');
     const submitBtn = document.getElementById('leadSubmitBtn');
 
-    function isValidEmail(email) {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    let hasAttemptedSubmit = false;
+
+    // Validacije
+    function validateName(name) {
+      const trimmed = (name || '').trim();
+      if (trimmed.length === 0) {
+        return { valid: false, error: 'Ime je obavezno' };
+      }
+      if (trimmed.length < 2) {
+        return { valid: false, error: 'Ime mora imati bar 2 karaktera' };
+      }
+      return { valid: true };
     }
 
-    emailInput.addEventListener('blur', () => {
-      const email = emailInput.value.trim();
-      if (email && !isValidEmail(email)) {
-        emailError.textContent = 'Unesi validan email';
-        emailInput.classList.add('input--error');
+    function validateEmail(email) {
+      const trimmed = (email || '').trim();
+      if (trimmed.length === 0) {
+        return { valid: false, error: 'Email je obavezan' };
+      }
+      if (!isValidEmail(trimmed)) {
+        return { valid: false, error: 'Email nije validan' };
+      }
+      return { valid: true };
+    }
+
+    // UI helpers
+    function setFieldError(input, errorEl, message) {
+      input.classList.add('input--error');
+      errorEl.textContent = message;
+    }
+
+    function clearFieldError(input, errorEl) {
+      input.classList.remove('input--error');
+      errorEl.textContent = '';
+    }
+
+    function checkAndUpdateField(input, errorEl, validator) {
+      const result = validator(input.value);
+      if (result.valid) {
+        clearFieldError(input, errorEl);
       } else {
-        emailError.textContent = '';
-        emailInput.classList.remove('input--error');
+        setFieldError(input, errorEl, result.error);
+      }
+      return result.valid;
+    }
+
+    // Real-time validacija (samo posle prvog submit-a)
+    nameInput.addEventListener('input', () => {
+      if (hasAttemptedSubmit) {
+        checkAndUpdateField(nameInput, nameError, validateName);
       }
     });
 
     emailInput.addEventListener('input', () => {
-      emailError.textContent = '';
-      emailInput.classList.remove('input--error');
+      if (hasAttemptedSubmit) {
+        checkAndUpdateField(emailInput, emailError, validateEmail);
+      }
     });
 
+    // Form submit
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      hasAttemptedSubmit = true;
 
+      // Validate both fields
+      const nameValid = checkAndUpdateField(nameInput, nameError, validateName);
+      const emailValid = checkAndUpdateField(emailInput, emailError, validateEmail);
+
+      if (!nameValid || !emailValid) {
+        // Focus na prvi polje sa error-om
+        if (!nameValid) {
+          nameInput.focus();
+        } else {
+          emailInput.focus();
+        }
+        return;
+      }
+
+      // Sve validno — submit
       const name = nameInput.value.trim();
       const email = emailInput.value.trim();
-
-      if (!email) {
-        emailError.textContent = 'Email je obavezan';
-        emailInput.classList.add('input--error');
-        emailInput.focus();
-        return;
-      }
-
-      if (!isValidEmail(email)) {
-        emailError.textContent = 'Unesi validan email';
-        emailInput.classList.add('input--error');
-        emailInput.focus();
-        return;
-      }
 
       submitBtn.disabled = true;
       submitBtn.textContent = 'ŠALJEM...';
 
       const sessionId = State.getSessionId();
-      const result = await API.completeSession(sessionId, { name: name || null, email });
+      const result = await API.completeSession(sessionId, { name, email });
 
       if (!result.success) {
         submitBtn.disabled = false;
         submitBtn.textContent = 'POGLEDAJ REZULTATE ›';
-        emailError.textContent = result.error || 'Greška, pokušaj ponovo';
+        setFieldError(emailInput, emailError, result.error || 'Greška, pokušaj ponovo');
         console.error('completeSession failed:', result);
         return;
       }
 
-      State.setAnswer('name', name || null);
+      State.setAnswer('name', name);
       State.setAnswer('email', email);
 
       await API.logEvent(sessionId, 'lead_submitted', {
@@ -1533,7 +1634,7 @@ const Quiz = (function() {
       redirectToVSL();
     });
 
-    setTimeout(() => emailInput.focus(), 100);
+    setTimeout(() => nameInput.focus(), 100);
   }
 
 
@@ -1568,10 +1669,6 @@ const Quiz = (function() {
   }
 
 
-  // ============================================
-  // PRIVREMENI PLACEHOLDER
-  // ============================================
-
   function showPlaceholder(message) {
     const html = `
       <h2 class="screen__title">${message}</h2>
@@ -1591,10 +1688,6 @@ const Quiz = (function() {
 
 })();
 
-
-// ============================================
-// START
-// ============================================
 
 document.addEventListener('DOMContentLoaded', () => {
   Quiz.init();
