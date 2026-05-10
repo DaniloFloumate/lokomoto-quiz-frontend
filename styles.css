@@ -1425,3 +1425,10 @@ body.edu-bg-positive .quiz-header {
     transform: translateY(0);
   }
 }
+
+/* Naglašeni subtitle (samo malo jači od običnog teksta, ne bold) */
+.screen__subtitle--emphasized {
+  font-weight: 500;
+  color: #1a202c;
+  margin-bottom: 8px;
+}
