@@ -475,6 +475,7 @@ const Quiz = (function() {
 
   // ============================================
   // SCREEN: PAIN RADIATES — STEP 5
+  // CHANGE: opcije su sada samo "Ne" i "Da" (bez dodatnog teksta)
   // ============================================
 
   function showPainRadiates() {
@@ -488,11 +489,11 @@ const Quiz = (function() {
       <div class="options-list">
         <button class="option" data-radiates="false">
           <span class="option__indicator"></span>
-          <span class="option__text">Ne, bol ostaje samo u ${painLocation === 'lower' ? 'leđima' : (painLocation === 'neck' ? 'vratu' : 'leđima')}</span>
+          <span class="option__text">Ne</span>
         </button>
         <button class="option" data-radiates="true">
           <span class="option__indicator"></span>
-          <span class="option__text">Da, ${painLocation === 'lower' ? 'širi se niz nogu' : 'širi se niz ruku'}</span>
+          <span class="option__text">Da</span>
         </button>
       </div>
     `;
@@ -752,61 +753,118 @@ const Quiz = (function() {
 
   // ============================================
   // SCREEN: PAIN DURATION — STEP 9
+  // CHANGE: kompletno menjamo iz radio buttons u slider sa 12 vrednosti
+  // Default: index 5 = "5 godina"
+  // Boja: zeleno-žuto-crveno gradient kao pain_scale
   // ============================================
 
   function showPainDuration() {
-    const options = [
-      { value: 'less_than_month', text: 'Manje od mesec dana' },
-      { value: '1_to_6_months', text: '1 do 6 meseci' },
-      { value: '6_to_12_months', text: '6 do 12 meseci' },
-      { value: '1_to_3_years', text: '1 do 3 godine' },
-      { value: 'more_than_3_years', text: 'Više od 3 godine' },
+    // 12 vrednosti slidera
+    const durations = [
+      '<1 godine',
+      '1 godina',
+      '2 godine',
+      '3 godine',
+      '4 godine',
+      '5 godina',
+      '6 godina',
+      '7 godina',
+      '8 godina',
+      '9 godina',
+      '10 godina',
+      '10+ godina',
     ];
 
-    const optionsHtml = options.map(opt => `
-      <button class="option" data-value="${opt.value}" data-text="${opt.text}">
-        <span class="option__indicator"></span>
-        <span class="option__text">${opt.text}</span>
-      </button>
-    `).join('');
+    // Pronađi prethodnu selekciju ako postoji (back navigation)
+    const previousAnswer = State.getAnswer('pain_duration');
+    const previousIndex = previousAnswer ? durations.indexOf(previousAnswer) : -1;
+    const initialIndex = previousIndex >= 0 ? previousIndex : 5; // default na "5 godina"
 
     const html = `
       <h2 class="screen__title">Koliko dugo imaš ovaj problem?</h2>
-      <p class="screen__subtitle">Što duže traje, to je važnije reagovati na vreme.</p>
+      <p class="screen__subtitle">Izaberi koliko godina imaš ovaj problem.</p>
 
-      <div class="options-list">
-        ${optionsHtml}
+      <div class="scale-container">
+        <div class="scale-value" id="durationValue">${durations[initialIndex]}</div>
+
+        <div class="scale-labels">
+          <span>Manje</span>
+          <span>Duže</span>
+        </div>
+
+        <input
+          type="range"
+          min="0"
+          max="11"
+          value="${initialIndex}"
+          step="1"
+          class="scale-slider"
+          id="durationSlider"
+        />
+
+        <div class="scale-numbers">
+          ${durations.map((_, i) => `<span>${i === 0 ? '<1' : (i === 11 ? '10+' : i)}</span>`).join('')}
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn--primary" id="continueBtn" disabled>NASTAVI ›</button>
       </div>
     `;
 
     setScreen(html, 'pain_duration', 9);
 
-    document.querySelectorAll('.option').forEach(opt => {
-      opt.addEventListener('click', () => {
-        document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-        opt.classList.add('selected');
-        document.querySelectorAll('.option').forEach(o => o.disabled = true);
+    const slider = document.getElementById('durationSlider');
+    const valueDisplay = document.getElementById('durationValue');
+    const continueBtn = document.getElementById('continueBtn');
 
-        setTimeout(() => {
-          handlePainDurationSelect({
-            value: opt.dataset.value,
-            text: opt.dataset.text,
-          });
-        }, 25);
-      });
+    let userInteracted = previousIndex >= 0;
+    if (userInteracted) continueBtn.disabled = false;
+
+    function updateSliderBg(index) {
+      // index 0-11 → percentage 0-100
+      const percentage = (index / 11) * 100;
+      slider.style.setProperty('--scale-progress', `${percentage}%`);
+
+      // Boja na osnovu pozicije: zelena (mali bol kratko) → žuta (srednje) → crvena (dugo)
+      let color;
+      if (index <= 3) color = '#10b981';      // 0-3 godine: zelena
+      else if (index <= 7) color = '#f59e0b'; // 4-7 godina: žuta
+      else color = '#ef4444';                  // 8+ godina: crvena
+
+      valueDisplay.style.color = color;
+    }
+
+    updateSliderBg(initialIndex);
+
+    slider.addEventListener('input', (e) => {
+      const index = parseInt(e.target.value);
+      valueDisplay.textContent = durations[index];
+      updateSliderBg(index);
+
+      if (!userInteracted) {
+        userInteracted = true;
+        continueBtn.disabled = false;
+      }
+    });
+
+    continueBtn.addEventListener('click', () => {
+      const index = parseInt(slider.value);
+      const text = durations[index];
+      handlePainDurationSelect(text);
     });
   }
 
 
-  async function handlePainDurationSelect(answer) {
-    State.setAnswer('pain_duration', answer.text);
+  async function handlePainDurationSelect(text) {
+    State.setAnswer('pain_duration', text);
 
     const timeOnStep = State.getTimeOnCurrentScreen();
     const sessionId = State.getSessionId();
 
     await Promise.all([
       API.updateSession(sessionId, {
-        pain_duration: answer.text,
+        pain_duration: text,
         current_step: 'pain_duration',
         current_step_number: 9,
       }),
@@ -814,7 +872,7 @@ const Quiz = (function() {
         step_number: 9,
         step_name: 'pain_duration',
         time_on_step: timeOnStep,
-        metadata: { value: answer.value, text: answer.text },
+        metadata: { value: text },
       }),
     ]);
 
@@ -862,6 +920,7 @@ const Quiz = (function() {
   // ============================================
   // SCREEN: GOALS — STEP 18
   // VALIDACIJA: bar 1 cilj mora biti izabran
+  // CHANGE: dodaje se drugi subtitle iznad postojeceg
   // ============================================
 
   function showGoals() {
@@ -888,6 +947,7 @@ const Quiz = (function() {
 
     const html = `
       <h2 class="screen__title">Izaberi svoje ciljeve</h2>
+      <p class="screen__subtitle screen__subtitle--bold">Oni će biti tvoja motivacija koja će te gurati napred kada odlučiš da živiš bez bola.</p>
       <p class="screen__subtitle">Možeš da izabereš jedan ili više ciljeva koji su ti najvažniji.</p>
 
       <div class="options-list" id="goalsList">
