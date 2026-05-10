@@ -1469,7 +1469,7 @@ body.edu-bg-positive .quiz-header {
   hyphens: none;
   word-break: keep-all;
   /* Daj sebi malo više prostora */
-  max-width: 95%;
+  max-width: 80%;
   margin-left: auto;
   margin-right: auto;
 }
