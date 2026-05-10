@@ -947,7 +947,7 @@ const Quiz = (function() {
 
     const html = `
       <h2 class="screen__title">Izaberi svoje ciljeve</h2>
-      <p class="screen__subtitle screen__subtitle--bold">Oni će biti tvoja motivacija koja će te gurati napred kada odlučiš da živiš bez bola.</p>
+      <p class="screen__subtitle screen__subtitle--emphasized">Oni će biti tvoja motivacija koja će te gurati napred kada odlučiš da živiš bez bola.</p>
       <p class="screen__subtitle">Možeš da izabereš jedan ili više ciljeva koji su ti najvažniji.</p>
 
       <div class="options-list" id="goalsList">
