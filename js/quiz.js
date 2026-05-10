@@ -20,7 +20,7 @@ const Quiz = (function() {
   // Globalna referenca na trenutnog swipe handler-a (za cleanup)
   let currentSwipeCleanup = null;
 
-  // Total screens (za progress kalkulaciju) — 22 ukupno
+  // Total screens (za progress kalkulaciju) — 22 ukupno (welcome + 21 step)
   const TOTAL_SCREENS = 22;
 
 
@@ -170,22 +170,23 @@ const Quiz = (function() {
     pendingScreenOpts = opts;
 
     const map = {
+      welcome: showWelcome,
       gender: showGender,
       pain_location: showPainLocation,
       pain_location_conclusion: () => showPainLocationConclusion(State.getAnswer('pain_location')),
       pain_radiates: showPainRadiates,
-      pain_frequency: () => showAbcQuestion('pain_frequency', 5),
-      pain_description: () => showAbcQuestion('pain_description', 6),
+      pain_frequency: () => showAbcQuestion('pain_frequency', 6),
+      pain_description: () => showAbcQuestion('pain_description', 7),
       pain_scale: showPainScale,
       pain_duration: showPainDuration,
       mid_conclusion: showMidConclusion,
-      pain_when: () => showAbcQuestion('pain_when', 10),
-      pain_trigger: () => showAbcQuestion('pain_trigger', 11),
-      what_helps: () => showAbcQuestion('what_helps', 12),
-      daily_impact: () => showAbcQuestion('daily_impact', 13),
-      what_worsens: () => showAbcQuestion('what_worsens', 14),
-      accompanying_feeling: () => showAbcQuestion('accompanying_feeling', 15),
-      previous_attempts: () => showAbcQuestion('previous_attempts', 16),
+      pain_when: () => showAbcQuestion('pain_when', 11),
+      pain_trigger: () => showAbcQuestion('pain_trigger', 12),
+      what_helps: () => showAbcQuestion('what_helps', 13),
+      daily_impact: () => showAbcQuestion('daily_impact', 14),
+      what_worsens: () => showAbcQuestion('what_worsens', 15),
+      accompanying_feeling: () => showAbcQuestion('accompanying_feeling', 16),
+      previous_attempts: () => showAbcQuestion('previous_attempts', 17),
       goals: () => showGoals(),
       edu_block: () => showEduBlock(),
     };
@@ -201,7 +202,7 @@ const Quiz = (function() {
   }
 
   // ============================================
-  // SCREEN: WELCOME (Započni kviz)
+  // SCREEN: WELCOME (Započni kviz) — STEP 1
   // ============================================
 
   function showWelcome() {
@@ -268,9 +269,19 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'welcome', null, { hideBack: true });
+    setScreen(html, 'welcome', 1, { hideBack: true });
 
-    document.getElementById('startBtn').addEventListener('click', () => {
+    document.getElementById('startBtn').addEventListener('click', async () => {
+      // Loguj completion event-a za welcome
+      const timeOnStep = State.getTimeOnCurrentScreen();
+      const sessionId = State.getSessionId();
+
+      await API.logEvent(sessionId, 'step_completed', {
+        step_number: 1,
+        step_name: 'welcome',
+        time_on_step: timeOnStep,
+      });
+
       setTimeout(() => {
         showGender();
       }, 50);
@@ -278,7 +289,7 @@ const Quiz = (function() {
   }
 
   // ============================================
-  // SCREEN: GENDER SELECTION
+  // SCREEN: GENDER SELECTION — STEP 2
   // ============================================
 
   function showGender() {
@@ -310,7 +321,7 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'gender', 1, { hideBack: true });
+    setScreen(html, 'gender', 2);
 
     document.querySelectorAll('.gender-card').forEach(card => {
       card.addEventListener('click', () => handleGenderSelect(card.dataset.gender));
@@ -328,10 +339,10 @@ const Quiz = (function() {
       API.updateSession(sessionId, {
         gender,
         current_step: 'gender',
-        current_step_number: 1,
+        current_step_number: 2,
       }),
       API.logEvent(sessionId, 'step_completed', {
-        step_number: 1,
+        step_number: 2,
         step_name: 'gender',
         time_on_step: timeOnStep,
         metadata: { value: gender },
@@ -343,7 +354,7 @@ const Quiz = (function() {
 
 
   // ============================================
-  // SCREEN: PAIN LOCATION (Vrat / Srednja / Donja leđa)
+  // SCREEN: PAIN LOCATION — STEP 3
   // ============================================
 
   function showPainLocation() {
@@ -367,7 +378,7 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'pain_location', 2);
+    setScreen(html, 'pain_location', 3);
 
     document.querySelectorAll('.option').forEach(opt => {
       opt.addEventListener('click', () => {
@@ -393,10 +404,10 @@ const Quiz = (function() {
       API.updateSession(sessionId, {
         pain_location: location,
         current_step: 'pain_location',
-        current_step_number: 2,
+        current_step_number: 3,
       }),
       API.logEvent(sessionId, 'step_completed', {
-        step_number: 2,
+        step_number: 3,
         step_name: 'pain_location',
         time_on_step: timeOnStep,
         metadata: { value: location },
@@ -408,7 +419,7 @@ const Quiz = (function() {
 
 
   // ============================================
-  // SCREEN: PAIN LOCATION CONCLUSION (statistika)
+  // SCREEN: PAIN LOCATION CONCLUSION — STEP 4
   // ============================================
 
   function showPainLocationConclusion(location) {
@@ -420,7 +431,6 @@ const Quiz = (function() {
 
     const conclusion = conclusions[location];
 
-    // Kičma sa highlight-om na različitom mestu za svaku lokaciju bola
     const icons = {
       neck: `
         <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -488,7 +498,7 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'pain_location_conclusion', 3);
+    setScreen(html, 'pain_location_conclusion', 4);
 
     document.getElementById('continueBtn').addEventListener('click', () => {
       setTimeout(() => {
@@ -499,7 +509,7 @@ const Quiz = (function() {
 
 
   // ============================================
-  // SCREEN: PAIN RADIATES (DA/NE → diagnosis)
+  // SCREEN: PAIN RADIATES — STEP 5
   // ============================================
 
   function showPainRadiates() {
@@ -522,7 +532,7 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'pain_radiates', 4);
+    setScreen(html, 'pain_radiates', 5);
 
     document.querySelectorAll('.option').forEach(opt => {
       opt.addEventListener('click', () => {
@@ -551,17 +561,17 @@ const Quiz = (function() {
         pain_radiates: radiates,
         diagnosis,
         current_step: 'pain_radiates',
-        current_step_number: 4,
+        current_step_number: 5,
       }),
       API.logEvent(sessionId, 'step_completed', {
-        step_number: 4,
+        step_number: 5,
         step_name: 'pain_radiates',
         time_on_step: timeOnStep,
         metadata: { value: radiates, diagnosis },
       }),
     ]);
 
-    showAbcQuestion('pain_frequency', 5);
+    showAbcQuestion('pain_frequency', 6);
   }
 
 
@@ -651,14 +661,14 @@ const Quiz = (function() {
 
   function routeNextAbc(currentQuestion) {
     const flow = {
-      pain_frequency: () => showAbcQuestion('pain_description', 6),
+      pain_frequency: () => showAbcQuestion('pain_description', 7),
       pain_description: () => showPainScale(),
-      pain_when: () => showAbcQuestion('pain_trigger', 11),
-      pain_trigger: () => showAbcQuestion('what_helps', 12),
-      what_helps: () => showAbcQuestion('daily_impact', 13),
-      daily_impact: () => showAbcQuestion('what_worsens', 14),
-      what_worsens: () => showAbcQuestion('accompanying_feeling', 15),
-      accompanying_feeling: () => showAbcQuestion('previous_attempts', 16),
+      pain_when: () => showAbcQuestion('pain_trigger', 12),
+      pain_trigger: () => showAbcQuestion('what_helps', 13),
+      what_helps: () => showAbcQuestion('daily_impact', 14),
+      daily_impact: () => showAbcQuestion('what_worsens', 15),
+      what_worsens: () => showAbcQuestion('accompanying_feeling', 16),
+      accompanying_feeling: () => showAbcQuestion('previous_attempts', 17),
       previous_attempts: () => showGoals(),
     };
 
@@ -672,7 +682,7 @@ const Quiz = (function() {
 
 
   // ============================================
-  // SCREEN: PAIN SCALE (slider 1-10)
+  // SCREEN: PAIN SCALE — STEP 8
   // ============================================
 
   function showPainScale() {
@@ -710,7 +720,7 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'pain_scale', 7);
+    setScreen(html, 'pain_scale', 8);
 
     const slider = document.getElementById('scaleSlider');
     const valueDisplay = document.getElementById('scaleValue');
@@ -761,10 +771,10 @@ const Quiz = (function() {
       API.updateSession(sessionId, {
         pain_scale: value,
         current_step: 'pain_scale',
-        current_step_number: 7,
+        current_step_number: 8,
       }),
       API.logEvent(sessionId, 'step_completed', {
-        step_number: 7,
+        step_number: 8,
         step_name: 'pain_scale',
         time_on_step: timeOnStep,
         metadata: { value },
@@ -776,7 +786,7 @@ const Quiz = (function() {
 
 
   // ============================================
-  // SCREEN: PAIN DURATION
+  // SCREEN: PAIN DURATION — STEP 9
   // ============================================
 
   function showPainDuration() {
@@ -804,7 +814,7 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'pain_duration', 8);
+    setScreen(html, 'pain_duration', 9);
 
     document.querySelectorAll('.option').forEach(opt => {
       opt.addEventListener('click', () => {
@@ -833,10 +843,10 @@ const Quiz = (function() {
       API.updateSession(sessionId, {
         pain_duration: answer.text,
         current_step: 'pain_duration',
-        current_step_number: 8,
+        current_step_number: 9,
       }),
       API.logEvent(sessionId, 'step_completed', {
-        step_number: 8,
+        step_number: 9,
         step_name: 'pain_duration',
         time_on_step: timeOnStep,
         metadata: { value: answer.value, text: answer.text },
@@ -848,7 +858,7 @@ const Quiz = (function() {
 
 
   // ============================================
-  // SCREEN: MID CONCLUSION
+  // SCREEN: MID CONCLUSION — STEP 10
   // ============================================
 
   function showMidConclusion() {
@@ -874,18 +884,18 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'mid_conclusion', 9);
+    setScreen(html, 'mid_conclusion', 10);
 
     document.getElementById('continueBtn').addEventListener('click', () => {
       setTimeout(() => {
-        showAbcQuestion('pain_when', 10);
+        showAbcQuestion('pain_when', 11);
       }, 50);
     });
   }
 
 
   // ============================================
-  // SCREEN: GOALS (multi-select)
+  // SCREEN: GOALS — STEP 18
   // ============================================
 
   function showGoals() {
@@ -923,7 +933,7 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'goals', 17);
+    setScreen(html, 'goals', 18);
 
     const continueBtn = document.getElementById('continueBtn');
 
@@ -954,10 +964,10 @@ const Quiz = (function() {
       API.updateSession(sessionId, {
         goals,
         current_step: 'goals',
-        current_step_number: 17,
+        current_step_number: 18,
       }),
       API.logEvent(sessionId, 'step_completed', {
-        step_number: 17,
+        step_number: 18,
         step_name: 'goals',
         time_on_step: timeOnStep,
         metadata: { count: goals.length },
@@ -969,7 +979,7 @@ const Quiz = (function() {
 
 
   // ============================================
-  // SCREEN: EDU BLOK (slideshow)
+  // SCREEN: EDU BLOK — STEP 19
   // ============================================
 
   const eduSlides = [
@@ -1004,29 +1014,21 @@ const Quiz = (function() {
     const slide = eduSlides[slideIndex];
     const isPositive = slide.type === 'positive';
 
-    // Set body class odmah (sprečava flash bele pozadine)
     document.body.className = isPositive ? 'edu-bg-positive' : 'edu-bg-warning';
 
     const existingSlide = document.querySelector('.edu-slide');
 
     if (existingSlide && State.getCurrentScreen() === 'edu_block') {
-      // Tranzicija unutar slideshow-a (slide 1 → 2 → 3 → 4)
       animateEduSlideContent(slideIndex);
       return;
     }
 
-    // PRVI ulazak u edu — overlay maska sakriva glitch
-    // Korak 1: kreiraj overlay (z-index 200, prekriva sve)
     const overlay = document.createElement('div');
     overlay.className = `edu-transition-overlay ${isPositive ? 'edu-slide--positive' : 'edu-slide--warning'}`;
     document.body.appendChild(overlay);
 
-    // Korak 2: ODMAH renderuj slide ispod overlay-a
-    // Slide se layoutuje dok je overlay vidljiv → korisnik ne vidi glitch
     renderEduSlide(slideIndex);
 
-    // Korak 3: sačekaj 500ms (slide se kompletno layoutovao + browser stabilan)
-    // pa onda fade-out overlay
     setTimeout(() => {
       overlay.style.opacity = '0';
       setTimeout(() => overlay.remove(), 300);
@@ -1046,7 +1048,6 @@ const Quiz = (function() {
     const iconSvg = getEduIcon(slide.icon);
     const textHtml = slide.text ? `<p class="edu-slide__text">${slide.text}</p>` : '';
 
-    // Back button na svim slide-ovima
     const backBtnHtml = `
       <button class="edu-slide__back" id="eduBackBtn" aria-label="Nazad">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1075,9 +1076,8 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'edu_block', 18);
+    setScreen(html, 'edu_block', 19);
 
-    // Fade-in animacija za sadržaj (smooth ulazak iza overlay-a)
     const contentEl = document.getElementById('eduContent');
     if (contentEl) {
       contentEl.style.opacity = '0';
@@ -1088,14 +1088,10 @@ const Quiz = (function() {
       }, 100);
     }
 
-    // Back button handler
-    // Na prvom slide-u → vrati na Goals screen
-    // Na ostalima → vrati na prethodni edu slide
     const backBtn = document.getElementById('eduBackBtn');
     if (backBtn) {
       backBtn.addEventListener('click', () => {
         if (slideIndex === 0) {
-          // Reset body class i edu state pre povratka na Goals
           document.body.className = '';
           showGoals();
         } else {
@@ -1112,9 +1108,7 @@ const Quiz = (function() {
       }
     });
 
-    // Klikabilni dot indicators
     attachEduDotListeners(slideIndex);
-
     attachEduSwipeListeners(slideIndex);
   }
 
@@ -1163,7 +1157,6 @@ const Quiz = (function() {
         }
       });
 
-      // Re-bind back button handler sa novim slideIndex
       const backBtn = document.getElementById('eduBackBtn');
       if (backBtn) {
         const newBackBtn = backBtn.cloneNode(true);
@@ -1181,27 +1174,20 @@ const Quiz = (function() {
       contentEl.style.opacity = '1';
       contentEl.style.transform = 'translateY(0)';
 
-      // Re-attach dot listeners za nov slideIndex
       attachEduDotListeners(slideIndex);
-
       attachEduSwipeListeners(slideIndex);
     }, 200);
   }
 
-  /**
-   * Dodaje klik handlere na dot indicators
-   * Klik na dot vodi na taj slide
-   */
   function attachEduDotListeners(currentIndex) {
     const dots = document.querySelectorAll('.edu-slide__dots .edu-dot');
-    
+
     dots.forEach((dot, idx) => {
-      // Skloni stare handlere kloniranjem
       const newDot = dot.cloneNode(true);
       dot.parentNode.replaceChild(newDot, dot);
-      
+
       newDot.style.cursor = 'pointer';
-      
+
       newDot.addEventListener('click', () => {
         if (idx !== currentIndex) {
           showEduBlock(idx);
@@ -1309,7 +1295,7 @@ const Quiz = (function() {
 
 
   // ============================================
-  // SCREEN: CALCULATING ANIMACIJA
+  // SCREEN: CALCULATING ANIMACIJA — STEP 20
   // ============================================
 
   function showCalculating() {
@@ -1352,7 +1338,7 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'calculating', 19, { hideBack: true });
+    setScreen(html, 'calculating', 20, { hideBack: true });
 
     const percentageEl = document.getElementById('calcPercentage');
     const circleEl = document.getElementById('calcCircleProgress');
@@ -1365,11 +1351,6 @@ const Quiz = (function() {
     let messageIndex = 0;
     let lastMessageChange = 0;
     const MESSAGE_INTERVAL = 750;
-
-    API.logEvent(State.getSessionId(), 'step_viewed', {
-      step_number: 19,
-      step_name: 'calculating',
-    });
 
     function animate(timestamp) {
       if (!startTime) startTime = timestamp;
@@ -1411,7 +1392,7 @@ const Quiz = (function() {
 
 
   // ============================================
-  // SCREEN: LEAD FORM
+  // SCREEN: LEAD FORM — STEP 21
   // ============================================
 
   function showLeadForm() {
@@ -1478,7 +1459,7 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'lead_form', 20, { hideBack: true });
+    setScreen(html, 'lead_form', 21, { hideBack: true });
 
     const form = document.getElementById('leadForm');
     const nameInput = document.getElementById('leadName');
@@ -1544,7 +1525,7 @@ const Quiz = (function() {
       State.setAnswer('email', email);
 
       await API.logEvent(sessionId, 'lead_submitted', {
-        step_number: 20,
+        step_number: 21,
         step_name: 'lead_form',
         time_on_step: State.getTimeOnCurrentScreen(),
       });
