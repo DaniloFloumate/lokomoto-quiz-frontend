@@ -1457,3 +1457,19 @@ body.edu-bg-positive .quiz-header {
   color: #6b7280;
   font-weight: 500;
 }
+
+/* Spreči orphan reči u subtitle-u (kad jedna reč ostane sama u drugom redu) */
+.screen__subtitle--emphasized {
+  font-weight: 500;
+  color: #1a202c;
+  margin-bottom: 8px;
+  /* Sprečava prelom pre poslednje reči — nikad sama u redu */
+  text-wrap: pretty;
+  /* Fallback za browser-e koji ne podržavaju text-wrap */
+  hyphens: none;
+  word-break: keep-all;
+  /* Daj sebi malo više prostora */
+  max-width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+}
