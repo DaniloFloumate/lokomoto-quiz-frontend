@@ -676,8 +676,9 @@ const Quiz = (function() {
           id="scaleSlider"
         />
 
-        <div class="scale-numbers">
-          ${[1,2,3,4,5,6,7,8,9,10].map(n => `<span>${n}</span>`).join('')}
+        <div class="scale-numbers scale-numbers--edges-only">
+          <span>1</span>
+          <span>10</span>
         </div>
       </div>
 
@@ -781,11 +782,11 @@ const Quiz = (function() {
     const initialIndex = previousIndex >= 0 ? previousIndex : 5; // default na "5 godina"
 
     const html = `
-      <h2 class="screen__title">Koliko dugo imaš ovaj problem?</h2>
+      <h2 class="screen__title">Koliko dugo imaš bol?</h2>
       <p class="screen__subtitle">Izaberi koliko godina imaš ovaj problem.</p>
 
       <div class="scale-container">
-        <div class="scale-value" id="durationValue">${durations[initialIndex]}</div>
+        <div class="scale-value scale-value--duration" id="durationValue">${durations[initialIndex]}</div>
 
         <div class="scale-labels">
           <span>Manje</span>
@@ -802,8 +803,9 @@ const Quiz = (function() {
           id="durationSlider"
         />
 
-        <div class="scale-numbers">
-          ${durations.map((_, i) => `<span>${i === 0 ? '<1' : (i === 11 ? '10+' : i)}</span>`).join('')}
+        <div class="scale-numbers scale-numbers--edges-only">
+          <span>&lt;1 godine</span>
+          <span>10+ godina</span>
         </div>
       </div>
 
@@ -822,15 +824,13 @@ const Quiz = (function() {
     if (userInteracted) continueBtn.disabled = false;
 
     function updateSliderBg(index) {
-      // index 0-11 → percentage 0-100
       const percentage = (index / 11) * 100;
       slider.style.setProperty('--scale-progress', `${percentage}%`);
 
-      // Boja na osnovu pozicije: zelena (mali bol kratko) → žuta (srednje) → crvena (dugo)
       let color;
-      if (index <= 3) color = '#10b981';      // 0-3 godine: zelena
-      else if (index <= 7) color = '#f59e0b'; // 4-7 godina: žuta
-      else color = '#ef4444';                  // 8+ godina: crvena
+      if (index <= 3) color = '#10b981';
+      else if (index <= 7) color = '#f59e0b';
+      else color = '#ef4444';
 
       valueDisplay.style.color = color;
     }
