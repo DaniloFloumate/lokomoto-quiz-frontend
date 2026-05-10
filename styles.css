@@ -1432,3 +1432,28 @@ body.edu-bg-positive .quiz-header {
   color: #1a202c;
   margin-bottom: 8px;
 }
+
+/* ============================================
+   SLIDER POBOLJSANJA
+   ============================================ */
+
+/* Veca vrednost za pain_duration (5 godina, 10+ godina, itd) */
+.scale-value--duration {
+  font-size: 80px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Samo prva i poslednja vrednost ispod slidera */
+.scale-numbers--edges-only {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding: 0 4px;
+}
+
+.scale-numbers--edges-only span {
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
+}
