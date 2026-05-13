@@ -359,28 +359,28 @@ const Quiz = (function() {
   }
 
 
-  async function handlePainLocationSelect(location) {
-    State.setAnswer('pain_location', location);
+  function handlePainLocationSelect(location) {  // ← NE async više
+  State.setAnswer('pain_location', location);
 
-    const timeOnStep = State.getTimeOnCurrentScreen();
-    const sessionId = State.getSessionId();
+  const timeOnStep = State.getTimeOnCurrentScreen();
+  const sessionId = State.getSessionId();
 
-    await Promise.all([
-      API.updateSession(sessionId, {
-        pain_location: location,
-        current_step: 'pain_location',
-        current_step_number: 3,
-      }),
-      API.logEvent(sessionId, 'step_completed', {
-        step_number: 3,
-        step_name: 'pain_location',
-        time_on_step: timeOnStep,
-        metadata: { value: location },
-      }),
-    ]);
+  // Šalji u pozadini — NE await
+  API.updateSession(sessionId, {
+    pain_location: location,
+    current_step: 'pain_location',
+    current_step_number: 3,
+  });
+  API.logEvent(sessionId, 'step_completed', {
+    step_number: 3,
+    step_name: 'pain_location',
+    time_on_step: timeOnStep,
+    metadata: { value: location },
+  });
 
-    showPainLocationConclusion(location);
-  }
+  // Idi odmah na sledeći screen — ne čekaj API
+  showPainLocationConclusion(location);
+}
 
 
   // ============================================
@@ -888,7 +888,7 @@ const Quiz = (function() {
     const html = `
       <div class="conclusion">
         <div class="conclusion__icon conclusion__icon--alert">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
             <line x1="12" y1="9" x2="12" y2="13"></line>
             <line x1="12" y1="17" x2="12.01" y2="17"></line>
