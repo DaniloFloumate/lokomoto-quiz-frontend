@@ -448,7 +448,7 @@ const Quiz = (function() {
       metadata: { value: radiates, diagnosis },
     });
 
-    showAbcQuestion('pain_frequency', 6);
+    showAbcQuestion('pain_frequency', 5);
   }
 
 
@@ -537,14 +537,14 @@ const Quiz = (function() {
 
   function routeNextAbc(currentQuestion) {
     const flow = {
-      pain_frequency: () => showAbcQuestion('pain_description', 7),
+      pain_frequency: () => showAbcQuestion('pain_description', 6),
       pain_description: () => showPainScale(),
-      pain_when: () => showAbcQuestion('pain_trigger', 12),
-      pain_trigger: () => showAbcQuestion('what_helps', 13),
-      what_helps: () => showAbcQuestion('daily_impact', 14),
-      daily_impact: () => showAbcQuestion('what_worsens', 15),
-      what_worsens: () => showAbcQuestion('accompanying_feeling', 16),
-      accompanying_feeling: () => showAbcQuestion('previous_attempts', 17),
+      pain_when: () => showAbcQuestion('pain_trigger', 11),
+      pain_trigger: () => showAbcQuestion('what_helps', 12),
+      what_helps: () => showAbcQuestion('daily_impact', 13),
+      daily_impact: () => showAbcQuestion('what_worsens', 14),
+      what_worsens: () => showAbcQuestion('accompanying_feeling', 15),
+      accompanying_feeling: () => showAbcQuestion('previous_attempts', 16),
       previous_attempts: () => showGoals(),
     };
 
@@ -819,7 +819,7 @@ const Quiz = (function() {
 
     document.getElementById('continueBtn').addEventListener('click', () => {
       setTimeout(() => {
-        showAbcQuestion('pain_when', 11);
+        showAbcQuestion('pain_when', 10);
       }, 200);
     });
   }
