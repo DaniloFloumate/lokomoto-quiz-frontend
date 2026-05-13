@@ -1598,10 +1598,49 @@ const Quiz = (function() {
         time_on_step: State.getTimeOnCurrentScreen(),
       });
 
+      // Make webhook (Lokomoto CRM integration) — fire-and-forget sa keepalive
+      sendMakeWebhook(sessionId, name, email);
+
       redirectToVSL();
     });
 
     setTimeout(() => nameInput.focus(), 100);
+  }
+
+
+  // ============================================
+  // MAKE WEBHOOK (Lokomoto CRM)
+  // Fire-and-forget sa keepalive — preživi redirect
+  // ============================================
+
+  function sendMakeWebhook(sessionId, name, email) {
+    const WEBHOOK_URL = 'https://hook.eu1.make.com/jquqjpst8vtj5fwb91n52dd8p0ze4egq';
+
+    const allAnswers = State.getAllAnswers();
+    const utmParams = State.getUtmParams();
+
+    const payload = {
+      submitted_at: new Date().toISOString(),
+      session_id: sessionId,
+      name: name,
+      email: email,
+      diagnosis: State.getAnswer('diagnosis'),
+      answers: allAnswers,
+      utm: utmParams,
+    };
+
+    try {
+      fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        keepalive: true, // preživi redirect
+      }).catch((err) => {
+        console.warn('[quiz] Make webhook fail:', err);
+      });
+    } catch (err) {
+      console.warn('[quiz] Make webhook exception:', err);
+    }
   }
 
 
