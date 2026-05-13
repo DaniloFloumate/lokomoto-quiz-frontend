@@ -54,6 +54,7 @@ body {
   background-color: var(--color-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 200ms ease;
 }
 
 button {
@@ -90,6 +91,7 @@ input:focus-visible {
   }
 }
 
+
 /* ============================================
    QUIZ HEADER (back dugme + progress bar)
    ============================================ */
@@ -125,6 +127,7 @@ input:focus-visible {
   pointer-events: none;
 }
 
+
 /* ============================================
    PROGRESS BAR
    ============================================ */
@@ -153,7 +156,7 @@ input:focus-visible {
 
 
 /* ============================================
-   SCREEN — Pojedinačan ekran (pitanje, intro, etc.)
+   SCREEN
    ============================================ */
 
 .quiz-screens {
@@ -166,7 +169,7 @@ input:focus-visible {
   display: flex;
   flex-direction: column;
   width: 100%;
-  animation: fadeIn 150ms ease-out;
+  animation: fadeIn 350ms ease;
 }
 
 .screen.hidden {
@@ -176,7 +179,7 @@ input:focus-visible {
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(4px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -190,6 +193,7 @@ input:focus-visible {
   line-height: 1.3;
   color: var(--color-text);
   margin-bottom: 24px;
+  text-align: center;
 }
 
 @media (min-width: 768px) {
@@ -202,6 +206,7 @@ input:focus-visible {
   font-size: 15px;
   color: var(--color-text-muted);
   margin-bottom: 16px;
+  text-align: center;
 }
 
 
@@ -279,7 +284,7 @@ input:focus-visible {
 
 
 /* ============================================
-   BUTTONS - NAVIGACIJA (Nastavi, Nazad)
+   BUTTONS
    ============================================ */
 
 .actions {
@@ -349,6 +354,7 @@ input:focus-visible {
   display: none !important;
 }
 
+
 /* ============================================
    GENDER SELECTION SCREEN
    ============================================ */
@@ -413,8 +419,9 @@ input:focus-visible {
   gap: 16px;
 }
 
+
 /* ============================================
-   CONCLUSION SCREEN (sa statistikom posle pitanja)
+   CONCLUSION SCREEN
    ============================================ */
 
 .conclusion {
@@ -429,12 +436,23 @@ input:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 80px;
-  height: 80px;
+  width: 120px;
+  height: 120px;
   margin-bottom: 24px;
-  background-color: rgba(22, 162, 157, 0.1);
+  background-color: rgba(22, 162, 157, 0.08);
   color: var(--color-primary);
   border-radius: 50%;
+}
+
+.conclusion__icon svg,
+.conclusion__icon img {
+  width: 80px;
+  height: 80px;
+}
+
+.conclusion__icon--alert {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
 }
 
 .conclusion__title {
@@ -444,6 +462,7 @@ input:focus-visible {
   color: var(--color-text);
   margin-bottom: 16px;
   max-width: 480px;
+  text-align: center;
 }
 
 @media (min-width: 768px) {
@@ -463,12 +482,34 @@ input:focus-visible {
   color: var(--color-text-muted);
   margin-bottom: 32px;
   max-width: 480px;
+  text-align: center;
+}
+
+.conclusion__callout {
+  background-color: var(--color-card);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-text);
+  text-align: center;
+  margin-bottom: 32px;
+  max-width: 480px;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .conclusion__callout {
+    padding: 24px 28px;
+    font-size: 16px;
+  }
 }
 
 .conclusion .actions {
   width: 100%;
   max-width: 480px;
 }
+
 
 /* ============================================
    SCALE / SLIDER (1-10)
@@ -525,7 +566,6 @@ input:focus-visible {
   cursor: pointer;
 }
 
-/* Webkit (Chrome, Safari, Edge) */
 .scale-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -544,7 +584,6 @@ input:focus-visible {
   cursor: grabbing;
 }
 
-/* Firefox */
 .scale-slider::-moz-range-thumb {
   width: 32px;
   height: 32px;
@@ -570,39 +609,18 @@ input:focus-visible {
   padding: 0 4px;
 }
 
-/* ============================================
-   CONCLUSION CALLOUT (istaknut blok unutar conclusion-a)
-   ============================================ */
-
-.conclusion__callout {
-  background-color: var(--color-card);
-  border-radius: var(--radius-md);
-  padding: 20px 24px;
-  font-size: 15px;
-  line-height: 1.6;
-  color: var(--color-text);
-  text-align: center;
-  margin-bottom: 32px;
-  max-width: 480px;
-  width: 100%;
-}
-
-@media (min-width: 768px) {
-  .conclusion__callout {
-    padding: 24px 28px;
-    font-size: 16px;
-  }
-}
-
-/* Alert variant - za conclusion-e koji upozoravaju na problem */
-.conclusion__icon--alert {
-  background-color: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-}
 
 /* ============================================
-   MULTI-SELECT CHECKBOX (umesto radio button-a)
+   MULTI-SELECT CHECKBOX (Goals screen)
    ============================================ */
+
+.option--multiselect {
+  align-items: center;
+}
+
+.option--multiselect .option__indicator {
+  display: none;
+}
 
 .option--multiselect .option__checkbox {
   flex-shrink: 0;
@@ -620,13 +638,15 @@ input:focus-visible {
 
 .option--multiselect .option__checkbox::after {
   content: '';
-  width: 12px;
-  height: 7px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 11px;
+  height: 6px;
   border-left: 2.5px solid white;
   border-bottom: 2.5px solid white;
-  transform: rotate(-45deg) scale(0);
+  transform: translate(-50%, -65%) rotate(-45deg) scale(0);
   transform-origin: center;
-  margin-top: -2px;
   transition: transform var(--transition-fast);
 }
 
@@ -636,16 +656,12 @@ input:focus-visible {
 }
 
 .option--multiselect.selected .option__checkbox::after {
-  transform: rotate(-45deg) scale(1);
+  transform: translate(-50%, -65%) rotate(-45deg) scale(1);
 }
 
-/* Sakrij default radio indicator za multi-select opcije */
-.option--multiselect .option__indicator {
-  display: none;
-}
 
 /* ============================================
-   EDU SLIDESHOW (full-screen slide-ovi)
+   EDU SLIDESHOW (full-screen)
    ============================================ */
 
 .edu-slide {
@@ -658,15 +674,14 @@ input:focus-visible {
 
   display: flex;
   flex-direction: column;
-  justify-content: center;  /* DRŽI ovaj red */
+  justify-content: center;
   padding: 32px 24px;
   color: white;
   text-align: center;
   overflow: hidden;
-  transition: background-color 300ms ease;  /* DODAJ ovaj red */
+  transition: background-color 300ms ease;
 }
 
-/* Na malim ekranima dozvoli skrolovanje ako tekst preli */
 @media (max-height: 600px) {
   .edu-slide {
     justify-content: flex-start;
@@ -690,10 +705,28 @@ input:focus-visible {
 
 .edu-slide__dots {
   display: flex;
+  align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-bottom: 48px;  /* Vrati ovaj red */
-  /* obriši position: absolute, top, left, right */
+  margin-bottom: 48px;
+  position: relative;
+}
+
+/* Wrapper za back button + dots na vrhu edu slide-a */
+.edu-slide__top-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 48px;
+  max-width: 440px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+.edu-slide__top-bar .edu-slide__dots {
+  margin-bottom: 0;
 }
 
 .edu-dot {
@@ -738,6 +771,7 @@ input:focus-visible {
   line-height: 1.25;
   margin-bottom: 20px;
   color: white;
+  text-align: center;
 }
 
 @media (min-width: 768px) {
@@ -751,6 +785,7 @@ input:focus-visible {
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.92);
   max-width: 420px;
+  text-align: center;
 }
 
 @media (min-width: 768px) {
@@ -783,9 +818,37 @@ input:focus-visible {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
+
+/* ============================================
+   EDU TRANSITION OVERLAY
+   Prazan crveni/teal screen koji se postavi PRE renderovanja
+   pravog slide-a, da se sakrije browser layout glitch
+   ============================================ */
+
+.edu-transition-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 200;
+  opacity: 1;
+  transition: opacity 200ms ease;
+  pointer-events: none;
+}
+
+.edu-transition-overlay.edu-slide--warning {
+  background-color: #c81e1e;
+}
+
+.edu-transition-overlay.edu-slide--positive {
+  background-color: var(--color-primary);
+}
+
+
 /* ============================================
    BODY BACKGROUND za edu slide-ove
-   Postavlja se ODMAH, sprečava flash bele pozadine
+   Sprečava flash bele pozadine pri prelasku
    ============================================ */
 
 body.edu-bg-warning {
@@ -796,8 +859,16 @@ body.edu-bg-positive {
   background-color: var(--color-primary);
 }
 
+/* Kad je body u edu mode-u, sakri sve elemente quiz-container-a OSIM edu slide-a.
+   Edu slide ima position: fixed pa je svejedno iznad svega. */
+body.edu-bg-warning .quiz-header,
+body.edu-bg-positive .quiz-header {
+  visibility: hidden;
+}
+
+
 /* ============================================
-   CALCULATING ANIMACIJA (3 sek 0% → 100%)
+   CALCULATING ANIMACIJA
    ============================================ */
 
 .calculating {
@@ -844,6 +915,7 @@ body.edu-bg-positive {
   color: var(--color-text);
   margin-bottom: 12px;
   line-height: 1.3;
+  text-align: center;
 }
 
 @media (min-width: 768px) {
@@ -856,11 +928,13 @@ body.edu-bg-positive {
   font-size: 15px;
   color: var(--color-text-muted);
   transition: opacity 150ms ease;
-  min-height: 24px; /* Sprečava skok layout-a kad se menja text */
+  min-height: 24px;
+  text-align: center;
 }
 
+
 /* ============================================
-   LEAD FORM SCREEN
+   LEAD FORM
    ============================================ */
 
 .lead-form-screen {
@@ -894,6 +968,7 @@ body.edu-bg-positive {
   color: var(--color-text);
   margin-bottom: 12px;
   line-height: 1.25;
+  text-align: center;
 }
 
 @media (min-width: 768px) {
@@ -906,6 +981,7 @@ body.edu-bg-positive {
   font-size: 15px;
   color: var(--color-text-muted);
   line-height: 1.5;
+  text-align: center;
 }
 
 .lead-form {
@@ -1001,29 +1077,399 @@ body.edu-bg-positive {
 }
 
 /* ============================================
-   GLOBAL CENTERING — naslovi i paragrafi
-   Konzistentno po celom kvizu
+   WELCOME SCREEN (Započni kviz)
    ============================================ */
 
-.screen__title,
-.screen__subtitle {
-  text-align: center;
+.welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  padding: 32px 0;
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-/* Conclusion screen — naslov i tekst */
-.conclusion__title,
-.conclusion__text {
-  text-align: center;
+.welcome__eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  padding: 6px 12px;
+  background-color: rgba(22, 162, 157, 0.1);
+  border-radius: var(--radius-pill);
 }
 
-/* Edu slide-ovi su već centrirani ali za svaki slučaj */
-.edu-slide__heading,
-.edu-slide__text {
-  text-align: center;
+.welcome__title {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--color-text);
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+  text-align: left;
 }
 
-/* Lead form */
-.lead-form__title,
-.lead-form__subtitle {
+@media (min-width: 768px) {
+  .welcome__title {
+    font-size: 38px;
+  }
+}
+
+.welcome__subtitle {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.welcome__divider {
+  width: 100%;
+  height: 1px;
+  background-color: var(--color-border);
+  margin-bottom: 24px;
+}
+
+.welcome__benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+  list-style: none;
+  padding: 0;
+  width: 100%;
+  align-items: stretch;
+}
+
+.welcome__benefits li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  font-size: 15px;
+  color: var(--color-text);
+  text-align: left;
+}
+
+.welcome__benefit-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  color: white;
+  margin-top: 2px;
+}
+
+.welcome__benefit-icon svg {
+  stroke: white;
+  stroke-width: 3.5;
+}
+
+.welcome__benefits li > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.welcome__benefits li strong {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.3;
+}
+
+.welcome__benefits li span {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.welcome .actions {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.btn--large {
+  padding: 20px 32px;
+  font-size: 16px;
+}
+
+.welcome__trust {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  width: 100%;
+  justify-content: center;
+}
+
+.welcome__trust-avatars {
+  display: flex;
+}
+
+.welcome__trust-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  border: 2px solid white;
+  margin-left: -8px;
+}
+
+.welcome__trust-avatar:first-child {
+  margin-left: 0;
+}
+
+.welcome__trust-avatar:nth-child(2) {
+  background: linear-gradient(135deg, #f59e0b, #fbbf24);
+}
+
+.welcome__trust-avatar:nth-child(3) {
+  background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+}
+
+
+/* ============================================
+   GENDER CARD UPDATE - sa ikonicama
+   ============================================ */
+
+.gender-card {
+  flex-direction: column;
   text-align: center;
+  padding: 32px 24px;
+  gap: 16px;
+  justify-content: center;
+}
+
+.gender-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: rgba(22, 162, 157, 0.1);
+  color: var(--color-primary);
+  transition: all var(--transition-fast);
+}
+
+.gender-card:hover .gender-card__icon {
+  background-color: rgba(22, 162, 157, 0.2);
+  transform: scale(1.05);
+}
+
+.gender-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+@media (max-width: 480px) {
+  .gender-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
+   EDU SLIDE BACK BUTTON
+   ============================================ */
+
+.edu-slide__back {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+  border: none;
+}
+
+.edu-slide__back:hover,
+.edu-slide__back:active {
+  background-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-50%) translateX(-2px);
+}
+
+.edu-slide__back svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ============================================
+   EDU DOTS - klikabilni
+   ============================================ */
+
+.edu-slide__dots .edu-dot {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+}
+
+/* Veće tap area na mobile-u (ali ne menja vizuelnu veličinu) */
+.edu-slide__dots .edu-dot::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+}
+
+.edu-slide__dots .edu-dot:hover {
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+/* ============================================
+   EDU SLIDE #2 - Animirani ripple talasi
+   ============================================ */
+
+@keyframes ripplePulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+}
+
+.spread-pulse {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: ripplePulse 2.5s ease-in-out infinite;
+}
+
+/* ============================================
+   FORM ERROR STATES
+   ============================================ */
+
+/* Error poruka iznad dugmeta (za goals screen) */
+.form-error {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #dc2626;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 16px 0;
+  text-align: center;
+  animation: errorFadeIn 0.2s ease-out;
+}
+
+/* Crveni border na svim opcijama kad je goals u error state-u */
+.options-list--error .option {
+  border-color: rgba(239, 68, 68, 0.4) !important;
+}
+
+/* Lead form input error state */
+.lead-form input.input--error,
+.form-field input.input--error {
+  border-color: #dc2626 !important;
+  background-color: rgba(239, 68, 68, 0.05);
+}
+
+.lead-form input.input--error:focus,
+.form-field input.input--error:focus {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+  outline: none;
+}
+
+/* Error poruka ispod input-a */
+.form-field__error {
+  display: block;
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: 6px;
+  min-height: 18px;
+  animation: errorFadeIn 0.15s ease-out;
+}
+
+.form-field__error:empty {
+  display: none;
+}
+
+@keyframes errorFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Naglašeni subtitle (samo malo jači od običnog teksta, ne bold) */
+.screen__subtitle--emphasized {
+  font-weight: 500;
+  color: #1a202c;
+  margin-bottom: 8px;
+}
+
+/* ============================================
+   SLIDER POBOLJSANJA
+   ============================================ */
+
+/* Veca vrednost za pain_duration (5 godina, 10+ godina, itd) */
+.scale-value--duration {
+  font-size: 80px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Samo prva i poslednja vrednost ispod slidera */
+.scale-numbers--edges-only {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding: 0 4px;
+}
+
+.scale-numbers--edges-only span {
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Spreči orphan reči u subtitle-u (kad jedna reč ostane sama u drugom redu) */
+.screen__subtitle--emphasized {
+  font-weight: 500;
+  color: #1a202c;
+  margin-bottom: 8px;
+  /* Sprečava prelom pre poslednje reči — nikad sama u redu */
+  text-wrap: pretty;
+  /* Fallback za browser-e koji ne podržavaju text-wrap */
+  hyphens: none;
+  word-break: keep-all;
+  /* Daj sebi malo više prostora */
+  max-width: 80%;
+  margin-left: auto;
+  margin-right: auto;
 }
