@@ -353,7 +353,7 @@ const Quiz = (function() {
 
         setTimeout(() => {
           handlePainLocationSelect(opt.dataset.location);
-        }, 25);
+        }, 15);
       });
     });
   }
@@ -509,7 +509,7 @@ const Quiz = (function() {
         setTimeout(() => {
           const radiates = opt.dataset.radiates === 'true';
           handlePainRadiatesSelect(radiates);
-        }, 25);
+        }, 15);
       });
     });
   }
@@ -584,7 +584,7 @@ const Quiz = (function() {
             value: opt.dataset.value,
             text: opt.dataset.text,
           });
-        }, 25);
+        }, 15);
       });
     });
   }
