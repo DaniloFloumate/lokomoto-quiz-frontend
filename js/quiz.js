@@ -250,7 +250,7 @@ const Quiz = (function() {
 
       setTimeout(() => {
         showGender();
-      }, 50);
+      }, 150);
     });
   }
 
@@ -353,7 +353,7 @@ const Quiz = (function() {
 
         setTimeout(() => {
           handlePainLocationSelect(opt.dataset.location);
-        }, 50);
+        }, 150);
       });
     });
   }
@@ -468,7 +468,7 @@ const Quiz = (function() {
     document.getElementById('continueBtn').addEventListener('click', () => {
       setTimeout(() => {
         showPainRadiates();
-      }, 50);
+      }, 150);
     });
   }
 
@@ -509,7 +509,7 @@ const Quiz = (function() {
         setTimeout(() => {
           const radiates = opt.dataset.radiates === 'true';
           handlePainRadiatesSelect(radiates);
-        }, 50);
+        }, 150);
       });
     });
   }
@@ -583,7 +583,7 @@ const Quiz = (function() {
             value: opt.dataset.value,
             text: opt.dataset.text,
           });
-        }, 50);
+        }, 150);
       });
     });
   }
@@ -908,7 +908,7 @@ const Quiz = (function() {
     document.getElementById('continueBtn').addEventListener('click', () => {
       setTimeout(() => {
         showAbcQuestion('pain_when', 11);
-      }, 50);
+      }, 150);
     });
   }
 
