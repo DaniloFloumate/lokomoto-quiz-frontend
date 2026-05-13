@@ -250,7 +250,7 @@ const Quiz = (function() {
 
       setTimeout(() => {
         showGender();
-      }, 150);
+      
     });
   }
 
@@ -353,7 +353,7 @@ const Quiz = (function() {
 
         setTimeout(() => {
           handlePainLocationSelect(opt.dataset.location);
-        }, 150);
+        }, 180);
       });
     });
   }
@@ -468,7 +468,7 @@ const Quiz = (function() {
     document.getElementById('continueBtn').addEventListener('click', () => {
       setTimeout(() => {
         showPainRadiates();
-      }, 150);
+      }, 180);
     });
   }
 
@@ -509,7 +509,7 @@ const Quiz = (function() {
         setTimeout(() => {
           const radiates = opt.dataset.radiates === 'true';
           handlePainRadiatesSelect(radiates);
-        }, 150);
+        }, 180);
       });
     });
   }
@@ -583,7 +583,7 @@ const Quiz = (function() {
             value: opt.dataset.value,
             text: opt.dataset.text,
           });
-        }, 150);
+        }, 180);
       });
     });
   }
@@ -908,7 +908,7 @@ const Quiz = (function() {
     document.getElementById('continueBtn').addEventListener('click', () => {
       setTimeout(() => {
         showAbcQuestion('pain_when', 11);
-      }, 150);
+      }, 180);
     });
   }
 
@@ -1426,7 +1426,7 @@ const Quiz = (function() {
         setTimeout(() => {
           messageEl.textContent = messages[messageIndex];
           messageEl.style.opacity = '1';
-        }, 150);
+        }, 180);
       }
 
       if (progress < 1) {
