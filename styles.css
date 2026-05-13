@@ -169,7 +169,7 @@ input:focus-visible {
   display: flex;
   flex-direction: column;
   width: 100%;
-  animation: fadeIn 350ms ease;
+  animation: fadeIn 150ms ease-out;
 }
 
 .screen.hidden {
@@ -179,7 +179,7 @@ input:focus-visible {
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(4px);
   }
   to {
     opacity: 1;
