@@ -15,7 +15,7 @@ const Quiz = (function() {
   let pendingScreenOpts = null;
   let currentSwipeCleanup = null;
 
-  const TOTAL_SCREENS = 22;
+  const TOTAL_SCREENS = 21;
 
 
   async function init() {
@@ -60,7 +60,7 @@ const Quiz = (function() {
     State.setSessionId(result.data.session_id);
     console.log('[quiz] Sesija kreirana:', result.data.session_id);
 
-    showWelcome();
+    showGender();
   }
 
 
@@ -136,23 +136,22 @@ const Quiz = (function() {
     pendingScreenOpts = opts;
 
     const map = {
-      welcome: showWelcome,
       gender: showGender,
       pain_location: showPainLocation,
       pain_location_conclusion: () => showPainLocationConclusion(State.getAnswer('pain_location')),
       pain_radiates: showPainRadiates,
-      pain_frequency: () => showAbcQuestion('pain_frequency', 6),
-      pain_description: () => showAbcQuestion('pain_description', 7),
+      pain_frequency: () => showAbcQuestion('pain_frequency', 5),
+      pain_description: () => showAbcQuestion('pain_description', 6),
       pain_scale: showPainScale,
       pain_duration: showPainDuration,
       mid_conclusion: showMidConclusion,
-      pain_when: () => showAbcQuestion('pain_when', 11),
-      pain_trigger: () => showAbcQuestion('pain_trigger', 12),
-      what_helps: () => showAbcQuestion('what_helps', 13),
-      daily_impact: () => showAbcQuestion('daily_impact', 14),
-      what_worsens: () => showAbcQuestion('what_worsens', 15),
-      accompanying_feeling: () => showAbcQuestion('accompanying_feeling', 16),
-      previous_attempts: () => showAbcQuestion('previous_attempts', 17),
+      pain_when: () => showAbcQuestion('pain_when', 10),
+      pain_trigger: () => showAbcQuestion('pain_trigger', 11),
+      what_helps: () => showAbcQuestion('what_helps', 12),
+      daily_impact: () => showAbcQuestion('daily_impact', 13),
+      what_worsens: () => showAbcQuestion('what_worsens', 14),
+      accompanying_feeling: () => showAbcQuestion('accompanying_feeling', 15),
+      previous_attempts: () => showAbcQuestion('previous_attempts', 16),
       goals: () => showGoals(),
       edu_block: () => showEduBlock(),
     };
@@ -168,94 +167,7 @@ const Quiz = (function() {
   }
 
   // ============================================
-  // SCREEN: WELCOME (Započni kviz) — STEP 1
-  // ============================================
-
-  function showWelcome() {
-    const html = `
-      <div class="welcome">
-        <span class="welcome__eyebrow">PERSONALIZOVAN KVIZ</span>
-
-        <h1 class="welcome__title">Otkrij uzrok svog bola za 2 minuta</h1>
-
-        <p class="welcome__subtitle">
-          Odgovori na nekoliko pitanja i dobićeš personalizovan plan rešavanja bola — potpuno besplatno.
-        </p>
-
-        <div class="welcome__divider"></div>
-
-        <ul class="welcome__benefits">
-          <li>
-            <span class="welcome__benefit-icon">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-            </span>
-            <div>
-              <strong>Personalizovan plan</strong>
-              <span>Tačno za tvoj tip bola</span>
-            </div>
-          </li>
-          <li>
-            <span class="welcome__benefit-icon">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-            </span>
-            <div>
-              <strong>Bez registracije</strong>
-              <span>Samo email na kraju</span>
-            </div>
-          </li>
-          <li>
-            <span class="welcome__benefit-icon">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-            </span>
-            <div>
-              <strong>100% besplatno</strong>
-              <span>Bez skrivenih troškova</span>
-            </div>
-          </li>
-        </ul>
-
-        <div class="actions">
-          <button class="btn btn--primary btn--large" id="startBtn">ZAPOČNI KVIZ ›</button>
-        </div>
-
-        <div class="welcome__trust">
-          <div class="welcome__trust-avatars">
-            <div class="welcome__trust-avatar"></div>
-            <div class="welcome__trust-avatar"></div>
-            <div class="welcome__trust-avatar"></div>
-          </div>
-          <span>3,500+ ljudi je već uradilo ovaj kviz</span>
-        </div>
-      </div>
-    `;
-
-    setScreen(html, 'welcome', 1, { hideBack: true });
-
-    document.getElementById('startBtn').addEventListener('click', () => {
-      const timeOnStep = State.getTimeOnCurrentScreen();
-      const sessionId = State.getSessionId();
-
-      // Fire-and-forget — ne čekamo API
-      API.logEvent(sessionId, 'step_completed', {
-        step_number: 1,
-        step_name: 'welcome',
-        time_on_step: timeOnStep,
-      });
-
-      setTimeout(() => {
-        showGender();
-      
-    });
-  }
-
-  // ============================================
-  // SCREEN: GENDER — STEP 2
+  // SCREEN: GENDER — STEP 1
   // ============================================
 
   function showGender() {
@@ -287,7 +199,7 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'gender', 2);
+    setScreen(html, 'gender', 1);
 
     document.querySelectorAll('.gender-card').forEach(card => {
       card.addEventListener('click', () => handleGenderSelect(card.dataset.gender));
@@ -305,10 +217,10 @@ const Quiz = (function() {
     API.updateSession(sessionId, {
       gender,
       current_step: 'gender',
-      current_step_number: 2,
+      current_step_number: 1,
     });
     API.logEvent(sessionId, 'step_completed', {
-      step_number: 2,
+      step_number: 1,
       step_name: 'gender',
       time_on_step: timeOnStep,
       metadata: { value: gender },
@@ -343,7 +255,7 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'pain_location', 3);
+    setScreen(html, 'pain_location', 2);
 
     document.querySelectorAll('.option').forEach(opt => {
       opt.addEventListener('click', () => {
@@ -369,10 +281,10 @@ const Quiz = (function() {
   API.updateSession(sessionId, {
     pain_location: location,
     current_step: 'pain_location',
-    current_step_number: 3,
+    current_step_number: 2,
   });
   API.logEvent(sessionId, 'step_completed', {
-    step_number: 3,
+    step_number: 2,
     step_name: 'pain_location',
     time_on_step: timeOnStep,
     metadata: { value: location },
@@ -463,7 +375,7 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'pain_location_conclusion', 4);
+    setScreen(html, 'pain_location_conclusion', 3);
 
     document.getElementById('continueBtn').addEventListener('click', () => {
       setTimeout(() => {
@@ -498,7 +410,7 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'pain_radiates', 5);
+    setScreen(html, 'pain_radiates', 4);
 
     document.querySelectorAll('.option').forEach(opt => {
       opt.addEventListener('click', () => {
@@ -527,10 +439,10 @@ const Quiz = (function() {
       pain_radiates: radiates,
       diagnosis,
       current_step: 'pain_radiates',
-      current_step_number: 5,
+      current_step_number: 4,
     });
     API.logEvent(sessionId, 'step_completed', {
-      step_number: 5,
+      step_number: 4,
       step_name: 'pain_radiates',
       time_on_step: timeOnStep,
       metadata: { value: radiates, diagnosis },
@@ -685,7 +597,7 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'pain_scale', 8);
+    setScreen(html, 'pain_scale', 7);
 
     const slider = document.getElementById('scaleSlider');
     const valueDisplay = document.getElementById('scaleValue');
@@ -736,10 +648,10 @@ const Quiz = (function() {
     API.updateSession(sessionId, {
       pain_scale: value,
       current_step: 'pain_scale',
-      current_step_number: 8,
+      current_step_number: 7,
     });
     API.logEvent(sessionId, 'step_completed', {
-      step_number: 8,
+      step_number: 7,
       step_name: 'pain_scale',
       time_on_step: timeOnStep,
       metadata: { value },
@@ -811,7 +723,7 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'pain_duration', 9);
+    setScreen(html, 'pain_duration', 8);
 
     const slider = document.getElementById('durationSlider');
     const valueDisplay = document.getElementById('durationValue');
@@ -863,10 +775,10 @@ const Quiz = (function() {
     API.updateSession(sessionId, {
       pain_duration: text,
       current_step: 'pain_duration',
-      current_step_number: 9,
+      current_step_number: 8,
     });
     API.logEvent(sessionId, 'step_completed', {
-      step_number: 9,
+      step_number: 8,
       step_name: 'pain_duration',
       time_on_step: timeOnStep,
       metadata: { value: text },
@@ -903,7 +815,7 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'mid_conclusion', 10);
+    setScreen(html, 'mid_conclusion', 9);
 
     document.getElementById('continueBtn').addEventListener('click', () => {
       setTimeout(() => {
@@ -959,7 +871,7 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'goals', 18);
+    setScreen(html, 'goals', 17);
 
     const continueBtn = document.getElementById('continueBtn');
     const errorEl = document.getElementById('goalsError');
@@ -1018,10 +930,10 @@ const Quiz = (function() {
     API.updateSession(sessionId, {
       goals,
       current_step: 'goals',
-      current_step_number: 18,
+      current_step_number: 17,
     });
     API.logEvent(sessionId, 'step_completed', {
-      step_number: 18,
+      step_number: 17,
       step_name: 'goals',
       time_on_step: timeOnStep,
       metadata: { count: goals.length },
@@ -1129,7 +1041,7 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'edu_block', 19);
+    setScreen(html, 'edu_block', 18);
 
     const contentEl = document.getElementById('eduContent');
     if (contentEl) {
@@ -1393,7 +1305,7 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'calculating', 20, { hideBack: true });
+    setScreen(html, 'calculating', 19, { hideBack: true });
 
     const percentageEl = document.getElementById('calcPercentage');
     const circleEl = document.getElementById('calcCircleProgress');
@@ -1572,7 +1484,7 @@ const Quiz = (function() {
       </div>
     `;
 
-    setScreen(html, 'lead_form', 21, { hideBack: true });
+    setScreen(html, 'lead_form', 20, { hideBack: true });
 
     const form = document.getElementById('leadForm');
     const nameInput = document.getElementById('leadName');
@@ -1681,7 +1593,7 @@ const Quiz = (function() {
       State.setAnswer('email', email);
 
       await API.logEvent(sessionId, 'lead_submitted', {
-        step_number: 21,
+        step_number: 20,
         step_name: 'lead_form',
         time_on_step: State.getTimeOnCurrentScreen(),
       });
@@ -1733,7 +1645,7 @@ const Quiz = (function() {
       </p>
       <pre style="background: #f5f5fa; padding: 16px; border-radius: 12px; font-size: 12px; overflow-x: auto;">${JSON.stringify(State.getAllAnswers(), null, 2)}</pre>
     `;
-    setScreen(html, 'placeholder', 2);
+    setScreen(html, 'placeholder', 1);
   }
 
 
