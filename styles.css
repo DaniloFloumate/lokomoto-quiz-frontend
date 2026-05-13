@@ -446,8 +446,8 @@ input:focus-visible {
 
 .conclusion__icon svg,
 .conclusion__icon img {
-  width: 80px;
-  height: 80px;
+  width: 56px;
+  height: 56px;
 }
 
 .conclusion__icon--alert {
