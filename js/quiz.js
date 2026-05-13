@@ -237,11 +237,12 @@ const Quiz = (function() {
 
     setScreen(html, 'welcome', 1, { hideBack: true });
 
-    document.getElementById('startBtn').addEventListener('click', async () => {
+    document.getElementById('startBtn').addEventListener('click', () => {
       const timeOnStep = State.getTimeOnCurrentScreen();
       const sessionId = State.getSessionId();
 
-      await API.logEvent(sessionId, 'step_completed', {
+      // Fire-and-forget — ne čekamo API
+      API.logEvent(sessionId, 'step_completed', {
         step_number: 1,
         step_name: 'welcome',
         time_on_step: timeOnStep,
@@ -294,25 +295,24 @@ const Quiz = (function() {
   }
 
 
-  async function handleGenderSelect(gender) {
+  function handleGenderSelect(gender) {
     State.setAnswer('gender', gender);
 
     const timeOnStep = State.getTimeOnCurrentScreen();
     const sessionId = State.getSessionId();
 
-    await Promise.all([
-      API.updateSession(sessionId, {
-        gender,
-        current_step: 'gender',
-        current_step_number: 2,
-      }),
-      API.logEvent(sessionId, 'step_completed', {
-        step_number: 2,
-        step_name: 'gender',
-        time_on_step: timeOnStep,
-        metadata: { value: gender },
-      }),
-    ]);
+    // Fire-and-forget — ne čekamo API
+    API.updateSession(sessionId, {
+      gender,
+      current_step: 'gender',
+      current_step_number: 2,
+    });
+    API.logEvent(sessionId, 'step_completed', {
+      step_number: 2,
+      step_name: 'gender',
+      time_on_step: timeOnStep,
+      metadata: { value: gender },
+    });
 
     showPainLocation();
   }
@@ -515,27 +515,26 @@ const Quiz = (function() {
   }
 
 
-  async function handlePainRadiatesSelect(radiates) {
+  function handlePainRadiatesSelect(radiates) {
     State.setAnswer('pain_radiates', radiates);
     const diagnosis = State.getAnswer('diagnosis');
 
     const timeOnStep = State.getTimeOnCurrentScreen();
     const sessionId = State.getSessionId();
 
-    await Promise.all([
-      API.updateSession(sessionId, {
-        pain_radiates: radiates,
-        diagnosis,
-        current_step: 'pain_radiates',
-        current_step_number: 5,
-      }),
-      API.logEvent(sessionId, 'step_completed', {
-        step_number: 5,
-        step_name: 'pain_radiates',
-        time_on_step: timeOnStep,
-        metadata: { value: radiates, diagnosis },
-      }),
-    ]);
+    // Fire-and-forget — ne čekamo API
+    API.updateSession(sessionId, {
+      pain_radiates: radiates,
+      diagnosis,
+      current_step: 'pain_radiates',
+      current_step_number: 5,
+    });
+    API.logEvent(sessionId, 'step_completed', {
+      step_number: 5,
+      step_name: 'pain_radiates',
+      time_on_step: timeOnStep,
+      metadata: { value: radiates, diagnosis },
+    });
 
     showAbcQuestion('pain_frequency', 6);
   }
@@ -590,36 +589,35 @@ const Quiz = (function() {
   }
 
 
-  async function handleAbcSelect(questionKey, screenNumber, answer) {
+  function handleAbcSelect(questionKey, screenNumber, answer) {
     State.setAnswer(questionKey, answer);
 
     const timeOnStep = State.getTimeOnCurrentScreen();
     const sessionId = State.getSessionId();
 
     const allAnswers = State.getAllAnswers();
-    await Promise.all([
-      API.updateSession(sessionId, {
-        answers: {
-          pain_frequency: allAnswers.pain_frequency,
-          pain_description: allAnswers.pain_description,
-          pain_when: allAnswers.pain_when,
-          pain_trigger: allAnswers.pain_trigger,
-          what_helps: allAnswers.what_helps,
-          daily_impact: allAnswers.daily_impact,
-          what_worsens: allAnswers.what_worsens,
-          accompanying_feeling: allAnswers.accompanying_feeling,
-          previous_attempts: allAnswers.previous_attempts,
-        },
-        current_step: questionKey,
-        current_step_number: screenNumber,
-      }),
-      API.logEvent(sessionId, 'step_completed', {
-        step_number: screenNumber,
-        step_name: questionKey,
-        time_on_step: timeOnStep,
-        metadata: { value: answer.value },
-      }),
-    ]);
+    // Fire-and-forget — ne čekamo API
+    API.updateSession(sessionId, {
+      answers: {
+        pain_frequency: allAnswers.pain_frequency,
+        pain_description: allAnswers.pain_description,
+        pain_when: allAnswers.pain_when,
+        pain_trigger: allAnswers.pain_trigger,
+        what_helps: allAnswers.what_helps,
+        daily_impact: allAnswers.daily_impact,
+        what_worsens: allAnswers.what_worsens,
+        accompanying_feeling: allAnswers.accompanying_feeling,
+        previous_attempts: allAnswers.previous_attempts,
+      },
+      current_step: questionKey,
+      current_step_number: screenNumber,
+    });
+    API.logEvent(sessionId, 'step_completed', {
+      step_number: screenNumber,
+      step_name: questionKey,
+      time_on_step: timeOnStep,
+      metadata: { value: answer.value },
+    });
 
     routeNextAbc(questionKey);
   }
@@ -728,25 +726,24 @@ const Quiz = (function() {
   }
 
 
-  async function handlePainScaleSelect(value) {
+  function handlePainScaleSelect(value) {
     State.setAnswer('pain_scale', value);
 
     const timeOnStep = State.getTimeOnCurrentScreen();
     const sessionId = State.getSessionId();
 
-    await Promise.all([
-      API.updateSession(sessionId, {
-        pain_scale: value,
-        current_step: 'pain_scale',
-        current_step_number: 8,
-      }),
-      API.logEvent(sessionId, 'step_completed', {
-        step_number: 8,
-        step_name: 'pain_scale',
-        time_on_step: timeOnStep,
-        metadata: { value },
-      }),
-    ]);
+    // Fire-and-forget — ne čekamo API
+    API.updateSession(sessionId, {
+      pain_scale: value,
+      current_step: 'pain_scale',
+      current_step_number: 8,
+    });
+    API.logEvent(sessionId, 'step_completed', {
+      step_number: 8,
+      step_name: 'pain_scale',
+      time_on_step: timeOnStep,
+      metadata: { value },
+    });
 
     showPainDuration();
   }
@@ -856,25 +853,24 @@ const Quiz = (function() {
   }
 
 
-  async function handlePainDurationSelect(text) {
+  function handlePainDurationSelect(text) {
     State.setAnswer('pain_duration', text);
 
     const timeOnStep = State.getTimeOnCurrentScreen();
     const sessionId = State.getSessionId();
 
-    await Promise.all([
-      API.updateSession(sessionId, {
-        pain_duration: text,
-        current_step: 'pain_duration',
-        current_step_number: 9,
-      }),
-      API.logEvent(sessionId, 'step_completed', {
-        step_number: 9,
-        step_name: 'pain_duration',
-        time_on_step: timeOnStep,
-        metadata: { value: text },
-      }),
-    ]);
+    // Fire-and-forget — ne čekamo API
+    API.updateSession(sessionId, {
+      pain_duration: text,
+      current_step: 'pain_duration',
+      current_step_number: 9,
+    });
+    API.logEvent(sessionId, 'step_completed', {
+      step_number: 9,
+      step_name: 'pain_duration',
+      time_on_step: timeOnStep,
+      metadata: { value: text },
+    });
 
     showMidConclusion();
   }
@@ -1012,25 +1008,24 @@ const Quiz = (function() {
   }
 
 
-  async function handleGoalsSelect(goals) {
+  function handleGoalsSelect(goals) {
     State.setAnswer('goals', goals);
 
     const timeOnStep = State.getTimeOnCurrentScreen();
     const sessionId = State.getSessionId();
 
-    await Promise.all([
-      API.updateSession(sessionId, {
-        goals,
-        current_step: 'goals',
-        current_step_number: 18,
-      }),
-      API.logEvent(sessionId, 'step_completed', {
-        step_number: 18,
-        step_name: 'goals',
-        time_on_step: timeOnStep,
-        metadata: { count: goals.length },
-      }),
-    ]);
+    // Fire-and-forget — ne čekamo API
+    API.updateSession(sessionId, {
+      goals,
+      current_step: 'goals',
+      current_step_number: 18,
+    });
+    API.logEvent(sessionId, 'step_completed', {
+      step_number: 18,
+      step_name: 'goals',
+      time_on_step: timeOnStep,
+      metadata: { count: goals.length },
+    });
 
     showEduBlock();
   }
