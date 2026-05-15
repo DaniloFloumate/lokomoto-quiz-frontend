@@ -670,25 +670,23 @@ const Quiz = (function() {
 
   function showPainDuration() {
     // 12 vrednosti slidera
-    const durations = [
-      '<1 godine',
-      '1 godina',
+    
+      const durations = [
+      '<1 mesec',
+      '1-3 meseca',
+      '3-6 meseci',
+      '6-12 meseci',
+      'godinu dana',
       '2 godine',
       '3 godine',
       '4 godine',
-      '5 godina',
-      '6 godina',
-      '7 godina',
-      '8 godina',
-      '9 godina',
-      '10 godina',
-      '10+ godina',
+      '5+ godina',
     ];
 
     // Pronađi prethodnu selekciju ako postoji (back navigation)
     const previousAnswer = State.getAnswer('pain_duration');
     const previousIndex = previousAnswer ? durations.indexOf(previousAnswer) : -1;
-    const initialIndex = previousIndex >= 0 ? previousIndex : 5; // default na "5 godina"
+    const initialIndex = previousIndex >= 0 ? previousIndex : 4; // default na "godinu dana"
 
     const html = `
       <h2 class="screen__title">Koliko dugo imaš bol?</h2>
@@ -705,7 +703,7 @@ const Quiz = (function() {
         <input
           type="range"
           min="0"
-          max="11"
+          max="8"
           value="${initialIndex}"
           step="1"
           class="scale-slider"
@@ -713,8 +711,8 @@ const Quiz = (function() {
         />
 
         <div class="scale-numbers scale-numbers--edges-only">
-          <span>&lt;1 godine</span>
-          <span>10+ godina</span>
+          <span>&lt;1 mesec</span>
+          <span>5+ godina</span>
         </div>
       </div>
 
@@ -733,12 +731,12 @@ const Quiz = (function() {
     if (userInteracted) continueBtn.disabled = false;
 
     function updateSliderBg(index) {
-      const percentage = (index / 11) * 100;
+      const percentage = (index / 8) * 100;
       slider.style.setProperty('--scale-progress', `${percentage}%`);
 
       let color;
-      if (index <= 3) color = '#10b981';
-      else if (index <= 7) color = '#f59e0b';
+      if (index <= 2) color = '#10b981';
+      else if (index <= 5) color = '#f59e0b';
       else color = '#ef4444';
 
       valueDisplay.style.color = color;
