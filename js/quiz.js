@@ -463,8 +463,8 @@ const Quiz = (function() {
       return;
     }
 
-    const optionsHtml = q.options.map(opt => `
-      <button class="option" data-value="${opt.value}" data-text="${opt.text.replace(/"/g, '&quot;')}">
+    const optionsHtml = q.options.map((opt, idx) => `
+      <button class="option" data-value="${opt.value}" data-text="${opt.text.replace(/"/g, '&quot;')}" data-index="${idx}">
         <span class="option__indicator"></span>
         <span class="option__text">${opt.text}</span>
       </button>
@@ -494,6 +494,7 @@ const Quiz = (function() {
           handleAbcSelect(questionKey, screenNumber, {
             value: opt.dataset.value,
             text: opt.dataset.text,
+            index: parseInt(opt.dataset.index, 10),
           });
         }, 200);
       });
@@ -1596,6 +1597,18 @@ const Quiz = (function() {
         time_on_step: State.getTimeOnCurrentScreen(),
       });
 
+      // ============================================
+      // FINALNA DIJAGNOZA — ABC bodovanje
+      // Override-uje single-question diagnosis koji je
+      // State automatski postavio na pain_radiates step-u
+      // ============================================
+      const finalDiagnosis = computeDiagnosis(State.getAllAnswers());
+      State.setAnswer('diagnosis', finalDiagnosis);
+      console.log('[quiz] Finalna dijagnoza:', finalDiagnosis);
+
+      // Update Supabase sa finalnom dijagnozom
+      API.updateSession(sessionId, { diagnosis: finalDiagnosis });
+
       // Make webhook (Lokomoto CRM integration) — fire-and-forget sa keepalive
       sendMakeWebhook(sessionId, name, email);
 
@@ -1603,6 +1616,69 @@ const Quiz = (function() {
     });
 
     setTimeout(() => nameInput.focus(), 100);
+  }
+
+
+  // ============================================
+  // COMPUTE DIAGNOSIS — ABC SCORING
+  // ============================================
+  // Bodovanje po starom modelu:
+  // - Index 0 (prvi odgovor)  → countA → 'muscle'  (Mišićni bol)
+  // - Index 1 (drugi odgovor) → countB → 'hernia'  (Diskus hernija)
+  // - Index 2 (treći odgovor) → countC → 'habits'  (Loše navike)
+  //
+  // pain_radiates (Da/Ne):
+  // - Ne (false) → countA (mišićni)
+  // - Da (true)  → countB (hernija)
+  //
+  // Hijerarhija pri tie:
+  //   B > A > C
+  //   - Čista većina → ide tamo
+  //   - A == B (oba > C) → B
+  //   - B == C (oba > A) → B
+  //   - A == C (oba > B) → A
+  //   - A == B == C       → B
+  //
+  // Default fallback (sva 0) → A
+  function computeDiagnosis(allAnswers) {
+    let countA = 0; // mišićni bol
+    let countB = 0; // diskus hernija
+    let countC = 0; // loše navike
+
+    // ABC pitanja sa 3 opcije
+    const abcQuestions = [
+      'pain_frequency', 'pain_description', 'pain_when', 'pain_trigger',
+      'what_helps', 'daily_impact', 'what_worsens', 'accompanying_feeling',
+      'previous_attempts'
+    ];
+
+    abcQuestions.forEach((key) => {
+      const answer = allAnswers[key];
+      if (!answer || typeof answer.index !== 'number') return;
+      if (answer.index === 0) countA++;
+      else if (answer.index === 1) countB++;
+      else if (answer.index === 2) countC++;
+    });
+
+    // pain_radiates (boolean)
+    if (allAnswers.pain_radiates === true) countB++;
+    else if (allAnswers.pain_radiates === false) countA++;
+
+    console.log('[quiz] Diagnosis scores → A (mišićni):', countA, '| B (hernija):', countB, '| C (navike):', countC);
+
+    // 1) Čista većina
+    if (countA > countB && countA > countC) return 'muscle';
+    if (countB > countA && countB > countC) return 'hernia';
+    if (countC > countA && countC > countB) return 'habits';
+
+    // 2) Nerešeno — hijerarhija B > A > C
+    if (countB === countA && countB > countC) return 'hernia';
+    if (countB === countC && countB > countA) return 'hernia';
+    if (countA === countC && countA > countB) return 'muscle';
+    if (countA === countB && countB === countC) return 'hernia';
+
+    // 3) Default fallback (sve 0 ili neka neočekivana kombinacija)
+    return 'muscle';
   }
 
 
@@ -1653,6 +1729,7 @@ const Quiz = (function() {
     const VSL_PATHS = {
       muscle: '/misicni-bol',
       hernia: '/diskus-hernija',
+      habits: '/lose-navike',
     };
 
     const path = VSL_PATHS[diagnosis] || VSL_PATHS.muscle;
