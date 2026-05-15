@@ -1728,7 +1728,7 @@ const Quiz = (function() {
 
     const VSL_PATHS = {
       muscle: '/misicni-bol',
-      hernia: '/diskus-hernija',
+      hernia: '/diskushernija',
       habits: '/lose-navike',
     };
 
