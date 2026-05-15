@@ -664,13 +664,13 @@ const Quiz = (function() {
 
   // ============================================
   // SCREEN: PAIN DURATION — STEP 9
-  // CHANGE: kompletno menjamo iz radio buttons u slider sa 12 vrednosti
-  // Default: index 5 = "5 godina"
+  // Slider sa 9 vrednosti (od <1 mesec do 5+ godina)
+  // Default: index 4 = "godinu dana"
   // Boja: zeleno-žuto-crveno gradient kao pain_scale
   // ============================================
 
   function showPainDuration() {
-    // 12 vrednosti slidera
+    // 9 vrednosti slidera
     
       const durations = [
       '<1 mesec',
@@ -691,7 +691,7 @@ const Quiz = (function() {
 
     const html = `
       <h2 class="screen__title">Koliko dugo imaš bol?</h2>
-      <p class="screen__subtitle">Izaberi koliko godina imaš ovaj problem.</p>
+      <p class="screen__subtitle">Izaberi koliko dugo imaš ovaj problem.</p>
 
       <div class="scale-container">
         <div class="scale-value scale-value--duration" id="durationValue">${durations[initialIndex]}</div>
