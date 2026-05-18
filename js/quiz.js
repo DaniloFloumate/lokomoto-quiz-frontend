@@ -665,7 +665,7 @@ const Quiz = (function() {
   // ============================================
   // SCREEN: PAIN DURATION — STEP 9
   // Slider sa 9 vrednosti (od <1 mesec do 5+ godina)
-  // Default: index 4 = "godinu dana"
+  // Default: index 4 = "1 godinu"
   // Boja: zeleno-žuto-crveno gradient kao pain_scale
   // ============================================
 
@@ -677,7 +677,7 @@ const Quiz = (function() {
       '1-3 meseca',
       '3-6 meseci',
       '6-12 meseci',
-      'godinu dana',
+      '1 godinu',
       '2 godine',
       '3 godine',
       '4 godine',
@@ -687,7 +687,7 @@ const Quiz = (function() {
     // Pronađi prethodnu selekciju ako postoji (back navigation)
     const previousAnswer = State.getAnswer('pain_duration');
     const previousIndex = previousAnswer ? durations.indexOf(previousAnswer) : -1;
-    const initialIndex = previousIndex >= 0 ? previousIndex : 4; // default na "godinu dana"
+    const initialIndex = previousIndex >= 0 ? previousIndex : 4; // default na "1 godinu"
 
     const html = `
       <h2 class="screen__title">Koliko dugo imaš bol?</h2>
